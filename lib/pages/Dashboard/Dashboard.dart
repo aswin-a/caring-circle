@@ -11,7 +11,7 @@ import '../UserSettings/UserSettings.dart';
 import '../../providers/User.dart';
 
 class Dashboard extends StatelessWidget {
-  static const routeName = '/';
+  static const routeName = '/dashboard';
   static const pageTitle = 'Dashboard';
 
   @override
