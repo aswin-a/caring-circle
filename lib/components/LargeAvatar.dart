@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../styles/textStyles.dart' as TextStyles;
-
 class LargeAvatar extends StatelessWidget {
   final bool editMode;
   final TextEditingController nameController;
+  final bool autoFocus;
+  final void Function (String) onNameChanged;
+  final void Function (String) onNameSubmitted;
 
-  LargeAvatar({@required this.nameController, this.editMode = false});
+  LargeAvatar({@required this.nameController, this.editMode = false, this.autoFocus = false, this.onNameChanged, this.onNameSubmitted});
 
   @override
   Widget build(BuildContext context) {
@@ -58,16 +59,21 @@ class LargeAvatar extends StatelessWidget {
               width: MediaQuery.of(context).size.width * 0.7,
               child: TextField(
                 controller: this.nameController,
+                onChanged: onNameChanged,
+                onSubmitted: onNameSubmitted,
                 cursorColor: Colors.white,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   filled: this.editMode,
                   fillColor: Colors.white.withOpacity(0.3),
+                  hintText: 'Name',
+                  hintStyle: Theme.of(context).textTheme.display1
                 ),
                 showCursor: true,
-                style: TextStyles.subtitleStyle,
+                style: Theme.of(context).textTheme.display3,
                 textAlign: TextAlign.center,
                 enabled: this.editMode,
+                autofocus: this.autoFocus,
               ),
             ),
           ),

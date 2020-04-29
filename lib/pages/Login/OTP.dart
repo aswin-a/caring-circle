@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rflutter_alert/rflutter_alert.dart' as AlertPopUp;
 
-import '../Dashboard/Dashboard.dart';
 import '../../components/CCFlatButton.dart';
+import './utils.dart' as utils;
 
 class OTP extends StatelessWidget {
   static const routeName = '/otp';
@@ -32,7 +31,6 @@ class OTPContent extends StatefulWidget {
 
 class _OTPContentState extends State<OTPContent> {
   bool isLoading = false;
-  bool isTimeout = false;
 
   @override
   void dispose() {
@@ -48,48 +46,14 @@ class _OTPContentState extends State<OTPContent> {
         .signInWithCredential(PhoneAuthProvider.getCredential(
             verificationId: verificationId, smsCode: otp))
         .then((AuthResult authResult) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          Dashboard.routeName, (Route<dynamic> route) => false);
+      utils.onSignInSuccess(context, authResult);
     }).catchError((error) {
       if (error.code == 'ERROR_INVALID_VERIFICATION_CODE') {
-        AlertPopUp.Alert(
-          context: context,
-          title: 'Incorrect OTP',
-          desc:
-              'Please make sure you have entered the 6 digit OTP sent to your phone number.',
-          buttons: [
-            AlertPopUp.DialogButton(
-              height: 50,
-              radius: BorderRadius.circular(10),
-              child: Text(
-                'Try Again',
-                style: Theme.of(context).textTheme.display3,
-              ),
-              onPressed: () => Navigator.pop(context),
-              color: Theme.of(context).scaffoldBackgroundColor,
-            ),
-          ],
-          style: AlertPopUp.AlertStyle(isCloseButton: false),
-        ).show();
+        utils.showAlert(context, 'Incorrect OTP', 'Try Again',
+            'Please make sure you have entered the 6 digit OTP sent to your phone number.');
       } else {
-        AlertPopUp.Alert(
-          context: context,
-          title: 'Oops !!!',
-          desc: 'Something went wrong. Please try entering the OTP again.',
-          buttons: [
-            AlertPopUp.DialogButton(
-              height: 50,
-              radius: BorderRadius.circular(10),
-              child: Text(
-                'No Problem',
-                style: Theme.of(context).textTheme.display3,
-              ),
-              onPressed: () => Navigator.pop(context),
-              color: Theme.of(context).scaffoldBackgroundColor,
-            ),
-          ],
-          style: AlertPopUp.AlertStyle(isCloseButton: false),
-        ).show();
+        utils.showAlert(context, 'Oops !!!', 'No Problem',
+            'Something went wrong. Please try entering the OTP again.');
       }
       this.setState(() {
         this.isLoading = false;

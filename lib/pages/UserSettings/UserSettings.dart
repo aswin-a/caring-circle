@@ -1,7 +1,8 @@
-import 'package:caring_circle/providers/User.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../constants.dart';
 import '../../styles/TextStyles.dart' as TextStyles;
 import '../../components/TitleBar.dart';
 import '../../components/LargeAvatar.dart';
@@ -46,12 +47,16 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
     }
   }
 
-  void rightButtonOnTap(User user) {
+  void rightButtonOnTap() {
     if (this.editMode) {
       setState(() {
         this.editMode = false;
       });
-      user.updateName(this.nameController.text);
+
+      Firestore.instance
+          .collection('users')
+          .document(Constants().currentUserId)
+          .updateData({'name': this.nameController.text});
     } else {
       setState(() {
         this.editMode = true;
@@ -61,42 +66,52 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
-    this.nameController.text = user.name;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        TitleBar(
-          UserSettings.pageTitle,
-          showLeftButton: true,
-          showLeftChevron: !this.editMode,
-          leftButtonTitle:
-              this.editMode ? 'Cancel' : widget.routeArgs['fromPage'],
-          leftButtonOnTapFn: this.leftButtonOnTap,
-          showRightButton: true,
-          rightButtonTitle: this.editMode ? 'Save' : 'Edit',
-          rightButtonOnTapFn: () => (this.rightButtonOnTap(user)),
-        ),
-        LargeAvatar(
-          nameController: this.nameController,
-          editMode: this.editMode,
-        ),
-        Expanded(
-          child: Container(
-            alignment: Alignment.bottomCenter,
-            padding: EdgeInsets.only(bottom: 20),
-            child: !this.editMode
-                ? FlatButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Logout',
-                      style: TextStyles.flatButtonStyle,
-                    ),
-                  )
-                : Container(),
-          ),
-        )
-      ],
+    return StreamBuilder<Object>(
+      stream: Firestore.instance
+          .collection('users')
+          .document(Constants().currentUserId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          final documentSnapshot = snapshot.data as DocumentSnapshot;
+          this.nameController.text = documentSnapshot.data['name'];
+        }
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            TitleBar(
+              UserSettings.pageTitle,
+              showLeftButton: true,
+              showLeftChevron: !this.editMode,
+              leftButtonTitle:
+                  this.editMode ? 'Cancel' : widget.routeArgs['fromPage'],
+              leftButtonOnTapFn: this.leftButtonOnTap,
+              showRightButton: true,
+              rightButtonTitle: this.editMode ? 'Save' : 'Edit',
+              rightButtonOnTapFn: () => (this.rightButtonOnTap()),
+            ),
+            LargeAvatar(
+              nameController: this.nameController,
+              editMode: this.editMode,
+            ),
+            Expanded(
+              child: Container(
+                alignment: Alignment.bottomCenter,
+                padding: EdgeInsets.only(bottom: 20),
+                child: !this.editMode
+                    ? FlatButton(
+                        onPressed: () {},
+                        child: Text(
+                          'Logout',
+                          style: TextStyles.flatButtonStyle,
+                        ),
+                      )
+                    : Container(),
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }

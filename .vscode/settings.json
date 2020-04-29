@@ -3,6 +3,7 @@
         "androidx",
         "caringcircle",
         "cupertino",
-        "firestore"
+        "firestore",
+        "rflutter"
     ]
 }

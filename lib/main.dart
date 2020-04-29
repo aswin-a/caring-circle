@@ -5,10 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import './pages/Splash/Splash.dart';
 import './pages/Login/Login.dart';
 import './pages/Login/OTP.dart';
+import './pages/Login/GetStarted.dart';
 import './pages/Dashboard/Dashboard.dart';
 import './pages/UserSettings/UserSettings.dart';
 import './providers/User.dart';
 import './styles/textThemes.dart';
+import './constants.dart';
 
 void main() => runApp(CaringCircle());
 
@@ -27,10 +29,10 @@ class CaringCircle extends StatelessWidget {
         ),
         home: FutureBuilder(
           future: FirebaseAuth.instance.currentUser(),
-          builder: (ctx, AsyncSnapshot<FirebaseUser> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              print(snapshot.data);
-              if (snapshot.data != null) {
+          builder: (ctx, AsyncSnapshot<FirebaseUser> firebaseUserSnapshot) {
+            if (firebaseUserSnapshot.connectionState == ConnectionState.done) {
+              if (firebaseUserSnapshot.data != null) {
+                Constants().currentUserId = firebaseUserSnapshot.data.uid;
                 return Dashboard();
               } else {
                 return Login();
@@ -43,6 +45,7 @@ class CaringCircle extends StatelessWidget {
           Splash.routeName: (ctx) => Splash(),
           Login.routeName: (ctx) => Login(),
           OTP.routeName: (ctx) => OTP(),
+          GetStarted.routeName: (ctx) => GetStarted(),
           Dashboard.routeName: (ctx) => Dashboard(),
           UserSettings.routeName: (ctx) => UserSettings(),
         },

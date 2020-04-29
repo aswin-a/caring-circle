@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 
-import '../Dashboard/Dashboard.dart';
 import './OTP.dart';
+import './utils.dart' as utils;
 
 class Login extends StatelessWidget {
   static const routeName = '/login';
@@ -50,7 +49,18 @@ class _PhoneNumberState extends State<PhoneNumber> {
 
   void onTapContinue(BuildContext context) {
     void _onVerificationCompleted(AuthCredential authCredential) {
-      Navigator.of(context).pushNamed(Dashboard.routeName);
+      this.setState(() {
+        this.isLoading = false;
+      });
+
+      FirebaseAuth.instance
+          .signInWithCredential(authCredential)
+          .then((AuthResult authResult) {
+        utils.onSignInSuccess(context, authResult);
+      }).catchError((error) {
+        utils.showAlert(context, 'Oops !!!', 'No Problem',
+            'Something went wrong. Please try joining again.');
+      });
     }
 
     void _onVerificationFailed(AuthException authException) {
@@ -58,23 +68,8 @@ class _PhoneNumberState extends State<PhoneNumber> {
         this.isLoading = false;
       });
 
-      Alert(
-        context: context,
-        title: 'Oops !!!',
-        desc: 'Something went wrong. Please try joining again.',
-        buttons: [
-          DialogButton(
-            height: 50,
-            radius: BorderRadius.circular(10),
-            child: Text(
-              'No Problem',
-              style: Theme.of(context).textTheme.display3,
-            ),
-            onPressed: () => Navigator.pop(context),
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-        ],
-      ).show();
+      utils.showAlert(context, 'Oops !!!', 'No Problem',
+          'Something went wrong. Please try joining again.');
     }
 
     void _onCodeSent(String verificationId, [int forceResendingToken]) {
