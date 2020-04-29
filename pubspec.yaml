@@ -31,6 +31,8 @@ dependencies:
   sticky_headers: "^0.1.8"
   pin_code_fields: ^2.5.1
   rflutter_alert: ^1.0.3
+  image_picker: ^0.6.5+3
+  image_cropper: ^1.2.1
 
 dev_dependencies:
   flutter_test:
