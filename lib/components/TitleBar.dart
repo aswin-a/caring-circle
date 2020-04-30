@@ -5,6 +5,7 @@ import './CCFlatButton.dart';
 class TitleBar extends StatelessWidget {
   final String title;
   final bool showAvatar;
+  final ImageProvider avatarImageProvider;
   final Function avatarOnTapFn;
   final bool showLeftButton;
   final bool showLeftChevron;
@@ -17,6 +18,7 @@ class TitleBar extends StatelessWidget {
   TitleBar(
     this.title, {
     this.showAvatar = false,
+    this.avatarImageProvider,
     this.avatarOnTapFn,
     this.showLeftButton = false,
     this.showLeftChevron = false,
@@ -80,8 +82,7 @@ class TitleBar extends StatelessWidget {
                           child: CircleAvatar(
                             radius: 18,
                             backgroundColor: Colors.white,
-                            backgroundImage:
-                                AssetImage('assets/images/defaultAvatar.png'),
+                            backgroundImage: this.avatarImageProvider,
                           ),
                         ),
                       )

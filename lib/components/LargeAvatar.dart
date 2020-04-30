@@ -22,8 +22,7 @@ class LargeAvatar extends StatelessWidget {
     this.name,
     this.onNameChanged,
     this.onNameSubmitted,
-    this.imageProvider =
-        const AssetImage('assets/images/defaultAvatarLarge.png'),
+    this.imageProvider,
     this.onImageUpdated,
   }) {
     nameController.text = this.name;
@@ -36,6 +35,8 @@ class LargeAvatar extends StatelessWidget {
           sourcePath: imageFile.path,
           aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
           cropStyle: CropStyle.circle,
+          maxHeight: 300,
+          maxWidth: 300,
           androidUiSettings: AndroidUiSettings(
             toolbarColor: Theme.of(context).scaffoldBackgroundColor,
             toolbarWidgetColor: Colors.white,
@@ -50,7 +51,6 @@ class LargeAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Large Avatar Rebuilt: ${this.nameController.text}');
     return Container(
       height: 220,
       child: Column(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sticky_headers/sticky_headers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../components/TitleBar.dart';
 import '../../components/RoundedSquareBox.dart';
@@ -9,6 +11,7 @@ import '../../components/SubtitleBar.dart';
 import './DashboardCircleCard.dart';
 import '../UserSettings/UserSettings.dart';
 import '../../providers/User.dart';
+import '../../constants.dart';
 
 class Dashboard extends StatelessWidget {
   static const routeName = '/dashboard';
@@ -29,7 +32,12 @@ class Dashboard extends StatelessWidget {
 }
 
 class _DashboardContent extends StatelessWidget {
-  const _DashboardContent({
+  final Stream userSnapshotStream = Firestore.instance
+      .collection('users')
+      .document(Constants().currentUserId)
+      .snapshots();
+
+  _DashboardContent({
     @required this.pageTitle,
   });
 
@@ -38,56 +46,69 @@ class _DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        TitleBar(
-          Dashboard.pageTitle,
-          showAvatar: true,
-          avatarOnTapFn: () => Navigator.of(context).pushNamed(
-              UserSettings.routeName,
-              arguments: {'fromPage': 'Dashboard'}),
-        ),
-        SizedBox(height: 10),
-        Expanded(
-          child: ListView(
+    return StreamBuilder<DocumentSnapshot>(
+        stream: userSnapshotStream,
+        builder: (context, snapshot) {
+          ImageProvider imageProvider =
+              AssetImage('assets/images/defaultAvatarLarge.png');
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.data.data['imageURL'] != null) {
+              imageProvider =
+                  CachedNetworkImageProvider(snapshot.data.data['imageURL']);
+            }
+          }
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  RoundedSquareBox(
-                      'Score', user.score.toString(), '${user.streak} days steady'),
-                  SizedBox(width: 10),
-                  ExpandedRoundedRectangleBox('Today', '1hr 15mins'),
-                  SizedBox(width: 10),
-                  RoundedSquareBox('COVID-19', '1203', 'Gurgaon'),
-                ],
+              TitleBar(
+                Dashboard.pageTitle,
+                showAvatar: true,
+                avatarImageProvider: imageProvider,
+                avatarOnTapFn: () => Navigator.of(context).pushNamed(
+                    UserSettings.routeName,
+                    arguments: {'fromPage': 'Dashboard'}),
               ),
               SizedBox(height: 10),
-              Row(
-                children: <Widget>[
-                  ExpandedRoundedRectangleBox('Today', '1hr 15mins'),
-                ],
-              ),
-              SizedBox(height: 10),
-              StickyHeader(
-                // overlapHeaders: true,
-                header: Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: SubtitleBar('Circles', showRightButton: true),
-                ),
-                content: Column(
-                  children: List.generate(15, (idx) {
-                    return idx % 2 == 0
-                        ? DashboardCircleCard()
-                        : SizedBox(height: 10);
-                  }),
+              Expanded(
+                child: ListView(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        RoundedSquareBox('Score', user.score.toString(),
+                            '${user.streak} days steady'),
+                        SizedBox(width: 10),
+                        ExpandedRoundedRectangleBox('Today', '1hr 15mins'),
+                        SizedBox(width: 10),
+                        RoundedSquareBox('COVID-19', '1203', 'Gurgaon'),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: <Widget>[
+                        ExpandedRoundedRectangleBox('Today', '1hr 15mins'),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    StickyHeader(
+                      // overlapHeaders: true,
+                      header: Container(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: SubtitleBar('Circles', showRightButton: true),
+                      ),
+                      content: Column(
+                        children: List.generate(15, (idx) {
+                          return idx % 2 == 0
+                              ? DashboardCircleCard()
+                              : SizedBox(height: 10);
+                        }),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
-        ),
-      ],
-    );
+          );
+        });
   }
 }
