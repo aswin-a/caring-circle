@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,8 +9,8 @@ import '../../components/ExpandedRoundedRectangleBox.dart';
 import '../../components/SubtitleBar.dart';
 import './DashboardCircleCard.dart';
 import '../UserSettings/UserSettings.dart';
-import '../../providers/User.dart';
 import '../../constants.dart';
+import '../../Models/User.dart';
 
 class Dashboard extends StatelessWidget {
   static const routeName = '/dashboard';
@@ -33,7 +32,7 @@ class Dashboard extends StatelessWidget {
 
 class _DashboardContent extends StatelessWidget {
   final Stream userSnapshotStream = Firestore.instance
-      .collection('users')
+      .collection(Constants().firestoreUsersCollection)
       .document(Constants().currentUserId)
       .snapshots();
 
@@ -45,16 +44,16 @@ class _DashboardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
     return StreamBuilder<DocumentSnapshot>(
         stream: userSnapshotStream,
         builder: (context, snapshot) {
           ImageProvider imageProvider =
-              AssetImage('assets/images/defaultAvatarLarge.png');
+              AssetImage(Constants().defaultUserAvatarAssetPath);
           if (snapshot.connectionState == ConnectionState.active) {
-            if (snapshot.data.data['imageURL'] != null) {
+            final user = User(data: snapshot.data.data);
+            if (user.imageURL != null) {
               imageProvider =
-                  CachedNetworkImageProvider(snapshot.data.data['imageURL']);
+                  CachedNetworkImageProvider(user.imageURL);
             }
           }
           return Column(
@@ -75,8 +74,7 @@ class _DashboardContent extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        RoundedSquareBox('Score', user.score.toString(),
-                            '${user.streak} days steady'),
+                        RoundedSquareBox('Score', '123', '2 days steady'),
                         SizedBox(width: 10),
                         ExpandedRoundedRectangleBox('Today', '1hr 15mins'),
                         SizedBox(width: 10),

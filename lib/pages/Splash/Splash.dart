@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../constants.dart';
+
 class Splash extends StatelessWidget {
   static const routeName = '/splash';
   static const pageTitle = 'Splash';
@@ -15,9 +17,9 @@ class Splash extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image(
+            Image.asset(
+              Constants().logoAssetPath,
               height: 100,
-              image: AssetImage('assets/logo.png'),
             ),
             Text(
               'Caring Circle',

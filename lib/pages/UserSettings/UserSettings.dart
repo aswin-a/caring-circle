@@ -8,10 +8,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 import '../../constants.dart';
-import '../../styles/TextStyles.dart' as TextStyles;
 import '../../components/TitleBar.dart';
 import '../../components/LargeAvatar.dart';
 import '../Login/Login.dart';
+import '../../Models/User.dart';
 
 class UserSettings extends StatelessWidget {
   static const routeName = '/user-settings';
@@ -40,15 +40,15 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
 
   String name;
   ImageProvider imageProvider =
-      AssetImage('assets/images/defaultAvatarLarge.png');
+      AssetImage(Constants().defaultUserAvatarAssetPath);
 
   Stream<DocumentSnapshot> documentSnapshotStream;
-  Map<String, Object> userData;
+  User user;
 
   @override
   void initState() {
     documentSnapshotStream = Firestore.instance
-        .collection('users')
+        .collection(Constants().firestoreUsersCollection)
         .document(Constants().currentUserId)
         .snapshots();
     super.initState();
@@ -68,29 +68,32 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
     if (this.editMode) {
       this.editMode = false;
 
-      String imageURL;
+      final tempUser = User();
+      tempUser.name = this.name;
+
       if (this.imageProvider is FileImage) {
         this.setState(() {
           this.isLoading = true;
         });
-        imageURL = await (await FirebaseStorage.instance
+        tempUser.imageURL = await (await FirebaseStorage.instance
                 .ref()
-                .child('userImage/${Constants().currentUserId}')
+                .child(
+                    '${Constants().firebaseStorageUserImagesPath}/${Constants().currentUserId}')
                 .putFile((this.imageProvider as FileImage).file)
                 .onComplete)
             .ref
             .getDownloadURL();
         this.isLoading = false;
       } else if (this.imageProvider is CachedNetworkImageProvider) {
-        imageURL = (this.imageProvider as CachedNetworkImageProvider).url;
+        tempUser.imageURL =
+            (this.imageProvider as CachedNetworkImageProvider).url;
       }
 
-      if (this.userData['name'] != this.name ||
-          this.userData['imageURL'] != imageURL) {
+      if (this.user != tempUser) {
         Firestore.instance
-            .collection('users')
+            .collection(Constants().firestoreUsersCollection)
             .document(Constants().currentUserId)
-            .updateData({'name': this.name, 'imageURL': imageURL});
+            .updateData(tempUser.data);
       } else {
         this.setState(() {});
       }
@@ -114,19 +117,19 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
   @override
   Widget build(BuildContext context) {
     final routeArgs = ModalRoute.of(context).settings.arguments as Map;
-    return StreamBuilder<Object>(
+    return StreamBuilder<DocumentSnapshot>(
       stream: this.documentSnapshotStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
-          this.userData = (snapshot.data as DocumentSnapshot).data;
+          this.user = User(data: snapshot.data.data);
           if (!this.editMode && !this.isLoading) {
-            this.name = this.userData['name'];
-            if (this.userData['imageURL'] != null) {
+            this.name = this.user.name;
+            if (this.user.imageURL != null) {
               this.imageProvider =
-                  CachedNetworkImageProvider(this.userData['imageURL']);
-            }
-            else {
-              this.imageProvider = AssetImage('assets/images/defaultAvatarLarge.png');
+                  CachedNetworkImageProvider(this.user.imageURL);
+            } else {
+              this.imageProvider =
+                  AssetImage(Constants().defaultUserAvatarAssetPath);
             }
           }
         }
@@ -177,7 +180,7 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
                           },
                           child: Text(
                             'Logout',
-                            style: TextStyles.flatButtonStyle,
+                            style: Theme.of(context).textTheme.button,
                           ),
                         )
                       : Container(),

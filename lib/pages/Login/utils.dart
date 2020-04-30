@@ -10,7 +10,7 @@ import '../../constants.dart';
 void onSignInSuccess(BuildContext context, AuthResult authResult) {
   Constants().currentUserId = authResult.user.uid;
   Firestore.instance
-      .collection('users')
+      .collection(Constants().firestoreUsersCollection)
       .document(Constants().currentUserId)
       .get()
       .then((DocumentSnapshot snapshot) {

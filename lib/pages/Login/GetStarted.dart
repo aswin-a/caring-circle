@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../../Models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -37,18 +38,20 @@ class _GetStartedContentState extends State<GetStartedContent> {
 
   String name;
   ImageProvider imageProvider =
-      AssetImage('assets/images/defaultAvatarLarge.png');
+      AssetImage(Constants().defaultUserAvatarAssetPath);
 
   void onTapContinue(BuildContext context) async {
     this.setState(() {
       this.isLoading = true;
     });
 
-    String imageURL;
+    final user = User();
+    user.name = this.name;
+
     if (this.imageProvider is FileImage) {
-      imageURL = await (await FirebaseStorage.instance
+      user.imageURL = await (await FirebaseStorage.instance
               .ref()
-              .child('userImage/${Constants().currentUserId}')
+              .child('${Constants().firebaseStorageUserImagesPath}/${Constants().currentUserId}')
               .putFile((this.imageProvider as FileImage).file)
               .onComplete)
           .ref
@@ -57,9 +60,9 @@ class _GetStartedContentState extends State<GetStartedContent> {
 
     FirebaseAuth.instance.currentUser().then((firebaseUser) {
       Firestore.instance
-          .collection('users')
+          .collection(Constants().firestoreUsersCollection)
           .document(firebaseUser.uid)
-          .setData({'name': this.name, 'imageURL': imageURL});
+          .setData(user.data);
     });
 
     Navigator.of(context).pushNamedAndRemoveUntil(
