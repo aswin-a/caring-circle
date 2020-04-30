@@ -29,7 +29,7 @@ class GetStartedContent extends StatefulWidget {
 }
 
 class _GetStartedContentState extends State<GetStartedContent> {
-  final nameController = TextEditingController();
+  String name;
   bool isLoading = false;
   bool isValid = false;
 
@@ -42,7 +42,7 @@ class _GetStartedContentState extends State<GetStartedContent> {
       Firestore.instance
           .collection('users')
           .document(firebaseUser.uid)
-          .setData({'name': this.nameController.text});
+          .setData({'name': this.name});
     });
 
     Navigator.of(context).pushNamedAndRemoveUntil(
@@ -50,6 +50,7 @@ class _GetStartedContentState extends State<GetStartedContent> {
   }
 
   void onNameChanged(String name) {
+    this.name = name;
     if (name.length == 0 && this.isValid) {
       this.setState(() {
         this.isValid = false;
@@ -76,7 +77,7 @@ class _GetStartedContentState extends State<GetStartedContent> {
           SizedBox(height: 10),
           Center(
             child: LargeAvatar(
-              nameController: nameController,
+              name: null,
               onNameChanged: this.onNameChanged,
               onNameSubmitted: (_) => this.onTapContinue(context),
               editMode: true,

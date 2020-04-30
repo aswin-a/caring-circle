@@ -8,7 +8,8 @@ class LargeAvatar extends StatelessWidget {
   final bool editMode;
   final bool autoFocus;
 
-  final TextEditingController nameController;
+  final TextEditingController nameController = TextEditingController();
+  final String name;
   final void Function(String) onNameChanged;
   final void Function(String) onNameSubmitted;
 
@@ -18,13 +19,15 @@ class LargeAvatar extends StatelessWidget {
   LargeAvatar({
     this.editMode = false,
     this.autoFocus = false,
-    this.nameController,
+    this.name,
     this.onNameChanged,
     this.onNameSubmitted,
     this.imageProvider =
         const AssetImage('assets/images/defaultAvatarLarge.png'),
     this.onImageUpdated,
-  });
+  }) {
+    nameController.text = this.name;
+  }
 
   void onTapAvatar(BuildContext context) {
     FocusScope.of(context).unfocus(focusPrevious: true);
@@ -44,8 +47,6 @@ class LargeAvatar extends StatelessWidget {
       });
     });
   }
-
-  
 
   @override
   Widget build(BuildContext context) {

@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../constants.dart';
 import '../../styles/TextStyles.dart' as TextStyles;
@@ -40,21 +42,21 @@ class _UserSettingsStreamContent extends StatelessWidget {
             .document(Constants().currentUserId)
             .snapshots(),
         builder: (context, snapshot) {
-          String userName;
+          Map userData;
           if (snapshot.connectionState == ConnectionState.active) {
             final documentSnapshot = snapshot.data as DocumentSnapshot;
-            userName = documentSnapshot.data['name'];
+            userData = documentSnapshot.data;
           }
-          return _UserSettingsContent(routeArgs: routeArgs, userName: userName);
+          return _UserSettingsContent(routeArgs: routeArgs, userData: userData);
         });
   }
 }
 
 class _UserSettingsContent extends StatefulWidget {
   final routeArgs;
-  final String userName;
+  final Map userData;
 
-  _UserSettingsContent({@required this.routeArgs, @required this.userName});
+  _UserSettingsContent({@required this.routeArgs, @required this.userData});
 
   @override
   _UserSettingsContentState createState() => _UserSettingsContentState();
@@ -63,14 +65,25 @@ class _UserSettingsContent extends StatefulWidget {
 class _UserSettingsContentState extends State<_UserSettingsContent> {
   var editMode = false;
   String name;
-  final nameController = TextEditingController(text: '');
   ImageProvider imageProvider =
       AssetImage('assets/images/defaultAvatarLarge.png');
 
-  
   @override
   void didUpdateWidget(_UserSettingsContent oldWidget) {
-    this.nameController.text = widget.userName;
+    // TODO: Understand the complete working
+    print('didUpdateWidget');
+
+    if (widget.userData != null) {
+      if (widget.userData.containsKey('name')) {
+        this.name = widget.userData['name'];
+      }
+
+      if (widget.userData.containsKey('imageURL') &&
+          widget.userData['imageURL'] != null) {
+        this.imageProvider =
+            CachedNetworkImageProvider(widget.userData['imageURL']);
+      }
+    }
     super.didUpdateWidget(oldWidget);
   }
 
@@ -78,22 +91,45 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
     if (this.editMode) {
       setState(() {
         this.editMode = false;
+        this.name = widget.userData['name'];
+        if (widget.userData.containsKey('imageURL') &&
+            widget.userData['imageURL'] != null) {
+          this.imageProvider =
+              CachedNetworkImageProvider(widget.userData['imageURL']);
+        }
       });
     } else {
       Navigator.of(context).pop();
     }
   }
 
-  void rightButtonOnTap() {
+  void rightButtonOnTap() async {
     if (this.editMode) {
       setState(() {
         this.editMode = false;
       });
 
+      String imageURL;
+      if (this.imageProvider is FileImage) {
+        imageURL = await (await FirebaseStorage.instance
+                .ref()
+                .child('userImage/${Constants().currentUserId}')
+                .putFile((this.imageProvider as FileImage).file)
+                .onComplete)
+            .ref
+            .getDownloadURL();
+      } else if (this.imageProvider is CachedNetworkImageProvider) {
+        imageURL = (this.imageProvider as CachedNetworkImageProvider).url;
+      }
+
       Firestore.instance
           .collection('users')
           .document(Constants().currentUserId)
-          .updateData({'name': this.nameController.text});
+          .updateData({'name': this.name, 'imageURL': imageURL});
+
+      if(imageURL != null) {
+        this.imageProvider = CachedNetworkImageProvider(imageURL);
+      }
     } else {
       setState(() {
         this.editMode = true;
@@ -107,8 +143,9 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
     });
   }
 
-  void onNameChanged (String name) {
-    print('Changed: $name');
+  void onNameChanged(String name) {
+    print('Name: $name');
+    this.name = name;
   }
 
   @override
@@ -130,7 +167,7 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
         ),
         LargeAvatar(
           editMode: this.editMode,
-          nameController: this.nameController,
+          name: this.name,
           onNameChanged: this.onNameChanged,
           imageProvider: this.imageProvider,
           onImageUpdated: this.onImageUpdated,
