@@ -116,6 +116,8 @@ class _OTPContentState extends State<OTPContent> {
             inactiveFillColor: Colors.white.withOpacity(0.3),
             textStyle: Theme.of(context).textTheme.display3,
             textInputType: TextInputType.number,
+            dialogTitle: 'Paste OTP?',
+            dialogContent: ' ',
             onCompleted: (otp) =>
                 this.onCompleted(routeArguments['verificationId'], otp),
           ),

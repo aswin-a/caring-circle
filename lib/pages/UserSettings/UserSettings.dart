@@ -117,79 +117,90 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
   @override
   Widget build(BuildContext context) {
     final routeArgs = ModalRoute.of(context).settings.arguments as Map;
-    return StreamBuilder<DocumentSnapshot>(
-      stream: this.documentSnapshotStream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          this.user = User(data: snapshot.data.data);
-          if (!this.editMode && !this.isLoading) {
-            this.name = this.user.name;
-            if (this.user.imageURL != null) {
-              this.imageProvider =
-                  CachedNetworkImageProvider(this.user.imageURL);
-            } else {
-              this.imageProvider =
-                  AssetImage(Constants().defaultUserAvatarAssetPath);
+    return WillPopScope(
+      onWillPop: () async {
+        if (this.editMode) {
+          this.leftButtonOnTap();
+          return false;
+        }
+        else {
+          return true;
+        }
+      },
+      child: StreamBuilder<DocumentSnapshot>(
+        stream: this.documentSnapshotStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            this.user = User(data: snapshot.data.data);
+            if (!this.editMode && !this.isLoading) {
+              this.name = this.user.name;
+              if (this.user.imageURL != null) {
+                this.imageProvider =
+                    CachedNetworkImageProvider(this.user.imageURL);
+              } else {
+                this.imageProvider =
+                    AssetImage(Constants().defaultUserAvatarAssetPath);
+              }
             }
           }
-        }
-        return LoadingOverlay(
-          isLoading: this.isLoading,
-          color: Colors.transparent,
-          progressIndicator: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              color: Colors.black.withOpacity(0.3),
-              padding: EdgeInsets.all(10),
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.white,
+          return LoadingOverlay(
+            isLoading: this.isLoading,
+            color: Colors.transparent,
+            progressIndicator: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                color: Colors.black.withOpacity(0.3),
+                padding: EdgeInsets.all(10),
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.white,
+                ),
               ),
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              TitleBar(
-                UserSettings.pageTitle,
-                showLeftButton: true,
-                showLeftChevron: !this.editMode,
-                leftButtonTitle:
-                    this.editMode ? 'Cancel' : routeArgs['fromPage'],
-                leftButtonOnTapFn: this.leftButtonOnTap,
-                showRightButton: true,
-                rightButtonTitle: this.editMode ? 'Save' : 'Edit',
-                rightButtonOnTapFn: () => (this.rightButtonOnTap()),
-              ),
-              LargeAvatar(
-                editMode: this.editMode,
-                name: this.name,
-                onNameChanged: this.onNameChanged,
-                imageProvider: this.imageProvider,
-                onImageUpdated: this.onImageUpdated,
-              ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: !this.editMode
-                      ? FlatButton(
-                          onPressed: () async {
-                            await FirebaseAuth.instance.signOut();
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                Login.routeName, (_) => false);
-                          },
-                          child: Text(
-                            'Logout',
-                            style: Theme.of(context).textTheme.button,
-                          ),
-                        )
-                      : Container(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                TitleBar(
+                  UserSettings.pageTitle,
+                  showLeftButton: true,
+                  showLeftChevron: !this.editMode,
+                  leftButtonTitle:
+                      this.editMode ? 'Cancel' : routeArgs['fromPage'],
+                  leftButtonOnTapFn: this.leftButtonOnTap,
+                  showRightButton: true,
+                  rightButtonTitle: this.editMode ? 'Save' : 'Edit',
+                  rightButtonOnTapFn: () => (this.rightButtonOnTap()),
                 ),
-              )
-            ],
-          ),
-        );
-      },
+                LargeAvatar(
+                  editMode: this.editMode,
+                  name: this.name,
+                  onNameChanged: this.onNameChanged,
+                  imageProvider: this.imageProvider,
+                  onImageUpdated: this.onImageUpdated,
+                ),
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.bottomCenter,
+                    padding: EdgeInsets.only(bottom: 20),
+                    child: !this.editMode
+                        ? FlatButton(
+                            onPressed: () async {
+                              await FirebaseAuth.instance.signOut();
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  Login.routeName, (_) => false);
+                            },
+                            child: Text(
+                              'Logout',
+                              style: Theme.of(context).textTheme.button,
+                            ),
+                          )
+                        : Container(),
+                  ),
+                )
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
