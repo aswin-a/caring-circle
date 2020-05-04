@@ -1,17 +1,21 @@
 import 'dart:io';
 
+import 'package:caring_circle/components/SettingsBlock.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../constants.dart';
 import '../../components/TitleBar.dart';
 import '../../components/LargeAvatar.dart';
+import '../../components/SubtitleBar.dart';
 import '../Login/Login.dart';
 import '../../Models/User.dart';
+import '../../components/MapDialog.dart';
 
 class UserSettings extends StatelessWidget {
   static const routeName = '/user-settings';
@@ -45,6 +49,8 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
   Stream<DocumentSnapshot> documentSnapshotStream;
   User user;
 
+  LatLng tempLocation;
+
   @override
   void initState() {
     documentSnapshotStream = Firestore.instance
@@ -68,14 +74,13 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
     if (this.editMode) {
       this.editMode = false;
 
-      final tempUser = User();
-      tempUser.name = this.name;
+      String imageURL;
 
       if (this.imageProvider is FileImage) {
         this.setState(() {
           this.isLoading = true;
         });
-        tempUser.imageURL = await (await FirebaseStorage.instance
+        imageURL = await (await FirebaseStorage.instance
                 .ref()
                 .child(
                     '${Constants().firebaseStorageUserImagesPath}/${Constants().currentUserId}')
@@ -85,15 +90,16 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
             .getDownloadURL();
         this.isLoading = false;
       } else if (this.imageProvider is CachedNetworkImageProvider) {
-        tempUser.imageURL =
-            (this.imageProvider as CachedNetworkImageProvider).url;
+        imageURL = (this.imageProvider as CachedNetworkImageProvider).url;
       }
 
-      if (this.user != tempUser) {
+      if (this.user.name != this.name || this.user.imageURL != imageURL) {
+        this.user.name = this.name;
+        this.user.imageURL = imageURL;
         Firestore.instance
             .collection(Constants().firestoreUsersCollection)
             .document(Constants().currentUserId)
-            .updateData(tempUser.data);
+            .updateData(this.user.userData);
       } else {
         this.setState(() {});
       }
@@ -114,6 +120,61 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
     this.name = name;
   }
 
+  void updateTempLocation(LatLng location) {
+    this.tempLocation = location;
+  }
+
+  void getHomeLocation() {
+    void updateHomeLocation() {
+      this.user.location.setHomeLocation(
+          this.tempLocation.latitude, this.tempLocation.longitude);
+      Firestore.instance
+          .collection(Constants().firestoreUsersCollection)
+          .document(Constants().currentUserId)
+          .updateData(this.user.locationData);
+    }
+
+    LatLng startLocation;
+    if (this.isHomeLocationSet) {
+      startLocation = LatLng(
+          this.user.location.home.latitude, this.user.location.home.longitude);
+    }
+    showMapDialog(
+      context,
+      'Home Location',
+      updateHomeLocation,
+      this.updateTempLocation,
+      startLocation,
+    );
+  }
+
+  void getOfficeLocation() {
+    void updateOfficeLocation() {
+      this.user.location.setOfficeLocation(
+          this.tempLocation.latitude, this.tempLocation.longitude);
+      Firestore.instance
+          .collection(Constants().firestoreUsersCollection)
+          .document(Constants().currentUserId)
+          .updateData(this.user.locationData);
+    }
+
+    LatLng startLocation;
+    if (this.isOfficeLocationSet) {
+      startLocation = LatLng(this.user.location.office.latitude,
+          this.user.location.office.longitude);
+    }
+    showMapDialog(
+      context,
+      'Office Location',
+      updateOfficeLocation,
+      this.updateTempLocation,
+      startLocation,
+    );
+  }
+
+  bool get isHomeLocationSet => this.user?.location?.home != null ?? false;
+  bool get isOfficeLocationSet => this.user?.location?.office != null ?? false;
+
   @override
   Widget build(BuildContext context) {
     final routeArgs = ModalRoute.of(context).settings.arguments as Map;
@@ -122,8 +183,7 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
         if (this.editMode) {
           this.leftButtonOnTap();
           return false;
-        }
-        else {
+        } else {
           return true;
         }
       },
@@ -177,6 +237,30 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
                   imageProvider: this.imageProvider,
                   onImageUpdated: this.onImageUpdated,
                 ),
+                !this.editMode
+                    ? Column(
+                        children: <Widget>[
+                          SubtitleBar('Location'),
+                          SettingsBlock(
+                            'Home',
+                            showRightChevron: true,
+                            leftIcon: Icons.home,
+                            onTap: () => this.getHomeLocation(),
+                            rightTextData:
+                                !this.isHomeLocationSet ? 'unset' : null,
+                          ),
+                          SizedBox(height: 10),
+                          SettingsBlock(
+                            'Office',
+                            showRightChevron: true,
+                            leftIcon: Icons.business_center,
+                            onTap: () => this.getOfficeLocation(),
+                            rightTextData:
+                                !this.isOfficeLocationSet ? 'unset' : null,
+                          ),
+                        ],
+                      )
+                    : Container(),
                 Expanded(
                   child: Container(
                     alignment: Alignment.bottomCenter,

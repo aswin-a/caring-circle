@@ -36,8 +36,11 @@ dependencies:
   image_cropper: ^1.2.1
   cached_network_image: ^2.1.0+1
   loading_overlay: ^0.2.1
-  
-  quiver: ^2.0.5
+  geofencing:
+    git:
+      url: git://github.com/bkonyi/FlutterGeofencing.git
+  google_maps_flutter: ^0.5.27
+  location: ^3.0.2
 
 dev_dependencies:
   flutter_test:

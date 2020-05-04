@@ -4,6 +4,7 @@
         "caringcircle",
         "cupertino",
         "firestore",
+        "geofencing",
         "rflutter"
     ]
 }

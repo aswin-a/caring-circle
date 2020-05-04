@@ -25,7 +25,11 @@ class LargeAvatar extends StatelessWidget {
     this.imageProvider,
     this.onImageUpdated,
   }) {
-    nameController.text = this.name;
+    if (this.name != null) {
+      nameController.text = this.name;
+      nameController.selection =
+          TextSelection.fromPosition(TextPosition(offset: this.name.length));
+    }
   }
 
   void onTapAvatar(BuildContext context) {

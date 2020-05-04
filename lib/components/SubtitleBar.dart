@@ -15,7 +15,7 @@ class SubtitleBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(this.data, style: TextStyles.subtitleStyle),
-          Icon(Icons.add, color: Colors.white, size: 28),
+          this.showRightButton ? Icon(Icons.add, color: Colors.white, size: 28) : Container(),
         ],
       ),
     );
