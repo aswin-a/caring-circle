@@ -4,7 +4,10 @@ import io.flutter.app.FlutterApplication
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.PluginRegistry.PluginRegistrantCallback
 import io.flutter.plugins.geofencing.GeofencingService
-import io.flutter.plugins.GeneratedPluginRegistrant
+
+import io.flutter.plugins.geofencing.GeofencingPlugin
+import io.flutter.plugins.firebase.cloudfirestore.CloudFirestorePlugin
+import io.flutter.plugins.firebaseauth.FirebaseAuthPlugin
 
 class Application : FlutterApplication(), PluginRegistrantCallback {
     override fun onCreate() {
@@ -13,6 +16,14 @@ class Application : FlutterApplication(), PluginRegistrantCallback {
     }
 
     override fun registerWith(registry: PluginRegistry) {
-        registry?.registrarFor("io.flutter.plugins.geofencing.GeofencingPlugin");
-  }
+        if (!registry!!.hasPlugin("io.flutter.plugins.geofencing")) {
+            GeofencingPlugin.registerWith(registry?.registrarFor("io.flutter.plugins.geofencing"));
+        }
+        if (!registry!!.hasPlugin("io.flutter.plugins.firebase.cloudfirestore")) {
+            CloudFirestorePlugin.registerWith(registry?.registrarFor("io.flutter.plugins.firebase.cloudfirestore"));
+        }
+        if (!registry!!.hasPlugin("io.flutter.plugins.firebaseauth")) {
+            FirebaseAuthPlugin.registerWith(registry?.registrarFor("io.flutter.plugins.firebaseauth"));
+        }
+    }
 }

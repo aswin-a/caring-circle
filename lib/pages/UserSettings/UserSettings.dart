@@ -93,6 +93,7 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
         imageURL = (this.imageProvider as CachedNetworkImageProvider).url;
       }
 
+      // TODO: Check if location is not deleted when only name is updated 
       if (this.user.name != this.name || this.user.imageURL != imageURL) {
         this.user.name = this.name;
         this.user.imageURL = imageURL;

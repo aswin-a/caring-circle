@@ -18,3 +18,5 @@ class Constants {
   String defaultUserAvatarAssetPath = 'assets/images/defaultAvatarLarge.png';
   String logoAssetPath = 'assets/logo.png';
 }
+
+enum LocationStatus {home, office, outside}

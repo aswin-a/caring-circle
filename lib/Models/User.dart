@@ -1,14 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../constants.dart';
 
 class User {
-  String _name = 'Aswin';
+  String _name;
   String _imageURL;
   UserLocation _location = UserLocation();
+  LocationStatus _locationStatus;
 
   User({Map<String, Object> data}) {
     if (data != null) {
       this._name = data['name'];
       this._imageURL = data['imageURL'];
+
+      final locationStatus = data['locationStatus'];
+      if (locationStatus == LocationStatus.home.toString()) {
+        this._locationStatus = LocationStatus.home;
+      } else if (locationStatus == LocationStatus.office.toString()) {
+        this._locationStatus = LocationStatus.office;
+      } else if (locationStatus == LocationStatus.outside.toString()) {
+        this._locationStatus = LocationStatus.outside;
+      }
 
       if (data.containsKey('location')) {
         this._location = UserLocation(data: data['location']);
@@ -21,6 +32,13 @@ class User {
 
   String get imageURL => this._imageURL;
   set imageURL(String imageURL) => this._imageURL = imageURL;
+
+  LocationStatus get locationStatus => this._locationStatus;
+  set locationStatus(LocationStatus locationStatus) =>
+      this._locationStatus = locationStatus;
+
+  Map<String, String> get locationStatusData =>
+      {'locationStatus': this._locationStatus.toString()};
 
   Map<String, Object> get userData =>
       {'name': this._name, 'imageURL': this._imageURL};
@@ -55,4 +73,24 @@ class UserLocation {
 
   Map<String, GeoPoint> get data =>
       {'home': this._home, 'office': this._office};
+}
+
+class UserActivity {
+  Timestamp _entry;
+  Timestamp _exit;
+
+  UserActivity({Map<String, dynamic> data}) {
+    if (data != null) {
+      this._entry = data['entry'] as Timestamp;
+      this._exit = data['exit'] as Timestamp;
+    }
+  }
+
+  Timestamp get entry => this._entry;
+  set entry(Timestamp entry) => this._entry = entry;
+
+  Timestamp get exit => this._exit;
+  set exit(Timestamp exit) => this._exit = exit;
+
+  Map<String, Timestamp> get data => {'entry': this._entry, 'exit': this._exit};
 }
