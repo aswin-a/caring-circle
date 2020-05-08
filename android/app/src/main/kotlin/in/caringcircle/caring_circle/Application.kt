@@ -8,6 +8,7 @@ import io.flutter.plugins.geofencing.GeofencingService
 import io.flutter.plugins.geofencing.GeofencingPlugin
 import io.flutter.plugins.firebase.cloudfirestore.CloudFirestorePlugin
 import io.flutter.plugins.firebaseauth.FirebaseAuthPlugin
+import com.baseflow.geolocator.GeolocatorPlugin
 
 class Application : FlutterApplication(), PluginRegistrantCallback {
     override fun onCreate() {
@@ -24,6 +25,9 @@ class Application : FlutterApplication(), PluginRegistrantCallback {
         }
         if (!registry!!.hasPlugin("io.flutter.plugins.firebaseauth")) {
             FirebaseAuthPlugin.registerWith(registry?.registrarFor("io.flutter.plugins.firebaseauth"));
+        }
+        if (!registry!!.hasPlugin("com.baseflow.geolocator")) {
+            GeolocatorPlugin.registerWith(registry?.registrarFor("com.baseflow.geolocator"));
         }
     }
 }

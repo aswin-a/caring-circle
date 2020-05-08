@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:caring_circle/components/SettingsBlock.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +15,8 @@ import '../../components/SubtitleBar.dart';
 import '../Login/Login.dart';
 import '../../Models/User.dart';
 import '../../components/MapDialog.dart';
+import '../../components/SettingsBlock.dart';
+import '../Dashboard/GeofencingUtils.dart';
 
 class UserSettings extends StatelessWidget {
   static const routeName = '/user-settings';
@@ -127,12 +128,14 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
 
   void getHomeLocation() {
     void updateHomeLocation() {
+      removeHomeGeofence();
       this.user.location.setHomeLocation(
           this.tempLocation.latitude, this.tempLocation.longitude);
       Firestore.instance
           .collection(Constants().firestoreUsersCollection)
           .document(Constants().currentUserId)
           .updateData(this.user.locationData);
+      initialiseHomeGeofence(this.user.location.home.latitude, this.user.location.home.longitude);
     }
 
     LatLng startLocation;
@@ -151,12 +154,14 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
 
   void getOfficeLocation() {
     void updateOfficeLocation() {
+      removeOfficeGeofence();
       this.user.location.setOfficeLocation(
           this.tempLocation.latitude, this.tempLocation.longitude);
       Firestore.instance
           .collection(Constants().firestoreUsersCollection)
           .document(Constants().currentUserId)
           .updateData(this.user.locationData);
+      initialiseOfficeGeofence(this.user.location.office.latitude, this.user.location.office.longitude);
     }
 
     LatLng startLocation;
@@ -270,6 +275,8 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
                         ? FlatButton(
                             onPressed: () async {
                               await FirebaseAuth.instance.signOut();
+                              removeHomeGeofence();
+                              removeOfficeGeofence();
                               Navigator.of(context).pushNamedAndRemoveUntil(
                                   Login.routeName, (_) => false);
                             },

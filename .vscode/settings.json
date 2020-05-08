@@ -1,10 +1,12 @@
 {
     "cSpell.words": [
         "androidx",
+        "bkonyi",
         "caringcircle",
         "cupertino",
         "firestore",
         "geofencing",
+        "geolocator",
         "rflutter"
     ]
 }

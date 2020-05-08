@@ -3,8 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:geofencing/geofencing.dart';
-import 'package:location/location.dart' as loc;
-import 'package:location_permissions/location_permissions.dart';
 
 import '../../components/TitleBar.dart';
 import '../../components/RoundedSquareBox.dart';
@@ -46,23 +44,12 @@ class __DashboardContentState extends State<_DashboardContent> {
       .snapshots();
 
   User user;
-  var location = loc.Location();
   var message = 'Nothing';
 
   @override
   void initState() {
     super.initState();
-
-    LocationPermissions().checkServiceStatus().then((service) {
-      print('Status: ${service}');
-      initialiseGeofenceManager();
-    });
-
-    // location.serviceEnabled().then((isEnabled) {
-    //   if (!isEnabled) {
-    //     location.requestService();
-    //   }
-    // });
+    initialiseGeofenceManager();
   }
 
   @override
@@ -76,6 +63,14 @@ class __DashboardContentState extends State<_DashboardContent> {
           this.user = User(data: snapshot.data.data);
           if (this.user.imageURL != null) {
             imageProvider = CachedNetworkImageProvider(this.user.imageURL);
+          }
+          if (this.user.location.home != null) {
+            final homeLocation = this.user.location.home;
+            initialiseHomeGeofence(homeLocation.latitude, homeLocation.longitude);
+          }
+          if (this.user.location.office != null) {
+            final officeLocation = this.user.location.office;
+            initialiseOfficeGeofence(officeLocation.latitude, officeLocation.longitude);
           }
         }
         return Column(
@@ -95,28 +90,10 @@ class __DashboardContentState extends State<_DashboardContent> {
                 Text(this.message),
                 RaisedButton(
                   onPressed: () {
-                    location.getLocation().then((locationData) {
-                      this.setState(() {
-                        this.message =
-                            'Location: ${locationData.latitude.toStringAsFixed(6)}, ${locationData.longitude.toStringAsFixed(6)}';
-                      });
-                      print(this.message);
-                    });
+                    removeHomeGeofence();
+                    removeOfficeGeofence();
                   },
-                  child: Text('Location'),
-                ),
-                RaisedButton(
-                  onPressed: () {
-                    // initialiseGeofence(this.user.location.home.latitude, this.user.location.home.longitude, 50);
-                    initialiseGeofence(28.429441, 77.098085, 50);
-                  },
-                  child: Text('Start'),
-                ),
-                RaisedButton(
-                  onPressed: () {
-                    GeofencingManager.removeGeofenceById('home');
-                  },
-                  child: Text('Stop'),
+                  child: Text('Remove Geofences'),
                 ),
                 RaisedButton(
                   onPressed: () async {

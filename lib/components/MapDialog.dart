@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 
 void showMapDialog(BuildContext context, String title, Function onComplete,
     Function(LatLng) onCameraUpdate, [LatLng startLocation]) async {
   if (startLocation == null) {
-    final location = Location();
-    await location.requestService();
-    final locationData = await location.getLocation();
-    startLocation = LatLng(locationData.latitude, locationData.longitude);
+    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    startLocation = LatLng(position.latitude, position.longitude);
   }
   
   onCameraUpdate(startLocation);

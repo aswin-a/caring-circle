@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geofencing/geofencing.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../constants.dart';
 import '../../Models/User.dart';
@@ -8,10 +9,19 @@ import '../../Models/User.dart';
 const HOME_GEOFENCE_ID = 'home';
 const OFFICE_GEOFENCE_ID = 'office';
 
+const double GEOFENCE_RADIUS = 50;
+
 const List<GeofenceEvent> triggers = <GeofenceEvent>[
   GeofenceEvent.enter,
   GeofenceEvent.exit,
 ];
+
+final AndroidGeofencingSettings androidSettings = AndroidGeofencingSettings(
+  initialTrigger: <GeofenceEvent>[
+    GeofenceEvent.enter,
+    GeofenceEvent.exit,
+  ],
+);
 
 void callback(List<String> ids, Location l, GeofenceEvent e) async {
   print('Fences: $ids Location $l Event: $e');
@@ -22,17 +32,22 @@ void callback(List<String> ids, Location l, GeofenceEvent e) async {
   final userDocumentReference = Firestore.instance
       .collection(Constants().firestoreUsersCollection)
       .document(firebaseUser.uid);
-  
-  final activityCollectionReference = userDocumentReference.collection('activity');
+
+  final user = User(data: (await userDocumentReference.get()).data);
+
+  final activityCollectionReference =
+      userDocumentReference.collection('activity');
 
   final latestActivityQuerySnapshot = await activityCollectionReference
-          .orderBy('exit', descending: true)
-          .limit(1)
-          .getDocuments();
-  
+      .orderBy('exit', descending: true)
+      .limit(1)
+      .getDocuments();
+
   if (latestActivityQuerySnapshot.documents.length > 0) {
-    final latestActivityDocumentSnapshot = latestActivityQuerySnapshot.documents.first;
-    final latestActivity = UserActivity(data: latestActivityDocumentSnapshot.data);
+    final latestActivityDocumentSnapshot =
+        latestActivityQuerySnapshot.documents.first;
+    final latestActivity =
+        UserActivity(data: latestActivityDocumentSnapshot.data);
 
     if (latestActivity.entry == null) {
       latestActivity.entry = Timestamp.fromDate(DateTime.now().toUtc());
@@ -41,19 +56,40 @@ void callback(List<String> ids, Location l, GeofenceEvent e) async {
   }
 
   if (e == GeofenceEvent.exit) {
-    userDocumentReference
-        .setData({'locationStatus': LocationStatus.outside.toString()}, merge: true);
+    final distanceFromHome = await Geolocator().distanceBetween(
+      user.location.home.latitude,
+      user.location.home.longitude,
+      l.latitude,
+      l.longitude,
+    );
+    final distanceFromOffice = await Geolocator().distanceBetween(
+      user.location.office.latitude,
+      user.location.office.longitude,
+      l.latitude,
+      l.longitude,
+    );
 
-    final newActivity = UserActivity();
-    newActivity.exit = Timestamp.fromDate(DateTime.now().toUtc());
-    activityCollectionReference.add(newActivity.data);
+    if ((ids.first == HOME_GEOFENCE_ID &&
+            distanceFromOffice > GEOFENCE_RADIUS) ||
+        (ids.first == OFFICE_GEOFENCE_ID &&
+            distanceFromHome > GEOFENCE_RADIUS)) {
+      userDocumentReference.setData(
+          {'locationStatus': LocationStatus.outside.toString()},
+          merge: true);
+
+      final newActivity = UserActivity();
+      newActivity.exit = Timestamp.fromDate(DateTime.now().toUtc());
+      activityCollectionReference.add(newActivity.data);
+    }
   } else if (e == GeofenceEvent.enter) {
     if (ids[0] == HOME_GEOFENCE_ID) {
-      userDocumentReference
-        .setData({'locationStatus': LocationStatus.home.toString()}, merge: true);
+      userDocumentReference.setData(
+          {'locationStatus': LocationStatus.home.toString()},
+          merge: true);
     } else if (ids[0] == OFFICE_GEOFENCE_ID) {
-      userDocumentReference
-        .setData({'locationStatus': LocationStatus.office.toString()}, merge: true);
+      userDocumentReference.setData(
+          {'locationStatus': LocationStatus.office.toString()},
+          merge: true);
     }
   }
 }
@@ -62,7 +98,15 @@ void initialiseGeofenceManager() async {
   await GeofencingManager.initialize();
 }
 
-void initialiseGeofence(
+void initialiseHomeGeofence(double latitude, double longitude) {
+  _initialiseGeofence(latitude, longitude, GEOFENCE_RADIUS, HOME_GEOFENCE_ID);
+}
+
+void initialiseOfficeGeofence(double latitude, double longitude) {
+  _initialiseGeofence(latitude, longitude, GEOFENCE_RADIUS, OFFICE_GEOFENCE_ID);
+}
+
+void _initialiseGeofence(
   double latitude,
   double longitude,
   double radius, [
@@ -78,13 +122,21 @@ void initialiseGeofence(
         longitude,
         radius,
         triggers,
-        // androidSettings: androidSettings,
+        androidSettings: androidSettings,
       ),
       callback,
     );
   }
 }
 
-reomoveGeofence([String geofenceId = HOME_GEOFENCE_ID]) {
+removeHomeGeofence() {
+  _reomoveGeofence(HOME_GEOFENCE_ID);
+}
+
+removeOfficeGeofence() {
+  _reomoveGeofence(OFFICE_GEOFENCE_ID);
+}
+
+_reomoveGeofence([String geofenceId = HOME_GEOFENCE_ID]) {
   GeofencingManager.removeGeofenceById(geofenceId);
 }
