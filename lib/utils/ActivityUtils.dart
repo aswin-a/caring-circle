@@ -4,6 +4,15 @@ import '../constants.dart';
 
 enum DurationRange { day, week, month }
 
+Stream<QuerySnapshot> get currentActivityStream {
+  return Firestore.instance
+      .collection(Constants().firestoreUsersCollection)
+      .document(Constants().currentUserId)
+      .collection(Constants().firestoreUserActivitiesCollection)
+      .where(Constants().firestoreUserActivitiesEntryField, isNull: true)
+      .snapshots();
+}
+
 Stream<QuerySnapshot> get thisMonthActivitiesStream {
   final currentDate = DateTime.now().toUtc();
   return Firestore.instance
@@ -63,6 +72,7 @@ List<List<double>> getDurationDataFromOrderedActivities(
   List<double> splitActivitiesIntoDurationFrames(DurationRange durationRange) {
     int durationRangeLength;
     DateTime cutoffTime;
+    List<double> result;
     switch (durationRange) {
       case DurationRange.day:
         durationRangeLength = 24;
@@ -71,6 +81,8 @@ List<List<double>> getDurationDataFromOrderedActivities(
           currentDate.month,
           currentDate.day,
         );
+        result = List.filled(currentDate.hour + 1, 10e-5, growable: true);
+        result.addAll(List.filled(durationRangeLength - result.length, 0));
         break;
       case DurationRange.week:
         durationRangeLength = 7;
@@ -79,15 +91,18 @@ List<List<double>> getDurationDataFromOrderedActivities(
           currentDate.month,
           currentDate.day - (currentDate.weekday % 7),
         );
+        result = List.filled((currentDate.weekday % 7) + 1, 10e-5, growable: true);
+        result.addAll(List.filled(durationRangeLength - result.length, 0));
         break;
       case DurationRange.month:
         durationRangeLength =
             DateTime(currentDate.year, currentDate.month + 1, 0).day;
         cutoffTime = DateTime(currentDate.year, currentDate.month);
+        result = List.filled(currentDate.day + 1, 10e-5, growable: true);
+        result.addAll(List.filled(durationRangeLength - result.length, 0));
         break;
       default:
     }
-    List<double> result = List.filled(durationRangeLength, 10e-5);
     int durationIndex = durationRangeLength - 1;
     int dataIndex = 0;
     while ((durationIndex >= 0) && (dataIndex < data.length)) {
