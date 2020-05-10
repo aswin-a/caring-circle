@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geofencing/geofencing.dart';
 import 'package:geolocator/geolocator.dart';
 
-import '../../constants.dart';
-import '../../Models/User.dart';
+import '../constants.dart';
+import '../Models/User.dart';
 
 const HOME_GEOFENCE_ID = 'home';
 const OFFICE_GEOFENCE_ID = 'office';
@@ -21,6 +21,7 @@ final AndroidGeofencingSettings androidSettings = AndroidGeofencingSettings(
     GeofenceEvent.enter,
     GeofenceEvent.exit,
   ],
+  notificationResponsiveness: 60000,
 );
 
 void callback(List<String> ids, Location l, GeofenceEvent e) async {

@@ -41,6 +41,7 @@ dependencies:
       url: git://github.com/bkonyi/FlutterGeofencing.git
   google_maps_flutter: ^0.5.27
   geolocator: ^5.3.1
+  bubble_tab_indicator: ^0.1.4
 
 dev_dependencies:
   flutter_test:

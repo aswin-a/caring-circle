@@ -12,6 +12,9 @@ class Constants {
   set currentUserId (String uid) => this._currentUserId = uid;
 
   String firestoreUsersCollection = 'users';
+  String firestoreUserActivitiesCollection = 'activity'; // TODO: Change name to Activities
+  String firestoreUserActivitiesExitField = 'exit';
+  String firestoreUserActivitiesEntryField = 'entry';
 
   String firebaseStorageUserImagesPath = 'userImages';
 

@@ -16,7 +16,7 @@ import '../Login/Login.dart';
 import '../../Models/User.dart';
 import '../../components/MapDialog.dart';
 import '../../components/SettingsBlock.dart';
-import '../Dashboard/GeofencingUtils.dart';
+import '../../utils/GeofencingUtils.dart';
 
 class UserSettings extends StatelessWidget {
   static const routeName = '/user-settings';

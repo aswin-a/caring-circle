@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:geofencing/geofencing.dart';
 
 import '../../components/TitleBar.dart';
-import '../../components/RoundedSquareBox.dart';
-import '../../components/ExpandedRoundedRectangleBox.dart';
 import '../../components/SubtitleBar.dart';
 import './DashboardCircleCard.dart';
 import '../UserSettings/UserSettings.dart';
 import '../../constants.dart';
 import '../../Models/User.dart';
-import './GeofencingUtils.dart';
+import '../../utils/GeofencingUtils.dart';
+import './DashboardChart.dart';
 
 class Dashboard extends StatelessWidget {
   static const routeName = '/dashboard';
@@ -85,48 +83,10 @@ class __DashboardContentState extends State<_DashboardContent> {
                   arguments: {'fromPage': 'Dashboard'}),
             ),
             SizedBox(height: 10),
-            Column(
-              children: <Widget>[
-                Text(this.message),
-                RaisedButton(
-                  onPressed: () {
-                    removeHomeGeofence();
-                    removeOfficeGeofence();
-                  },
-                  child: Text('Remove Geofences'),
-                ),
-                RaisedButton(
-                  onPressed: () async {
-                    final list =
-                        await GeofencingManager.getRegisteredGeofenceIds();
-                    this.setState(() {
-                      this.message = 'IDs: $list';
-                    });
-                    print(this.message);
-                  },
-                  child: Text('List IDs'),
-                ),
-              ],
-            ),
             Expanded(
               child: ListView(
                 children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      RoundedSquareBox('Score', '123', '2 days steady'),
-                      SizedBox(width: 10),
-                      ExpandedRoundedRectangleBox('Today', '1hr 15mins'),
-                      SizedBox(width: 10),
-                      RoundedSquareBox('COVID-19', '1203', 'Gurgaon'),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: <Widget>[
-                      ExpandedRoundedRectangleBox('Today', '1hr 15mins'),
-                    ],
-                  ),
+                  DashboardChart(),
                   SizedBox(height: 10),
                   StickyHeader(
                     // overlapHeaders: true,
