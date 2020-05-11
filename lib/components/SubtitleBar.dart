@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../styles/textStyles.dart' as TextStyles;
 
 class SubtitleBar extends StatelessWidget {
   final String data;

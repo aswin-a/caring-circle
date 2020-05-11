@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../styles/textStyles.dart' as TextStyles;
 import './CCFlatButton.dart';
 
 class TitleBar extends StatelessWidget {
@@ -73,7 +72,6 @@ class TitleBar extends StatelessWidget {
                 ),
                 this.showAvatar
                     ? InkWell(
-                        // borderRadius: BorderRadius.circular(19),
                         highlightColor: Colors.transparent,
                         onTap: this.avatarOnTapFn,
                         child: CircleAvatar(

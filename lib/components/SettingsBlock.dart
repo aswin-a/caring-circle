@@ -15,49 +15,48 @@ class SettingsBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
+    return InkWell(
       borderRadius: BorderRadius.circular(10),
-      child: Container(
-        color: Colors.white,
+      onTap: this.onTap,
+      child: Ink(
         padding: EdgeInsets.symmetric(horizontal: 10),
         height: 44,
-        child: InkWell(
-          onTap: this.onTap,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  this.leftIcon != null
-                      ? Icon(leftIcon, size: 24)
-                      : Container(),
-                  SizedBox(width: 10),
-                  Text(
-                    this.data,
-                    style: Theme.of(context).textTheme.body2,
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  this.rightTextData != null
-                      ? Text(
-                          this.rightTextData,
-                          style: Theme.of(context).textTheme.caption,
-                        )
-                      : Container(),
-                  SizedBox(width: 10),
-                  this.showRightChevron
-                      ? Icon(
-                          Icons.chevron_right,
-                          size: 24,
-                        )
-                      : Container(),
-                ],
-              ),
-            ],
-          ),
+        decoration: ShapeDecoration(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            color: Colors.white),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                this.leftIcon != null ? Icon(leftIcon, size: 24) : Container(),
+                SizedBox(width: 10),
+                Text(
+                  this.data,
+                  style: Theme.of(context).textTheme.body2,
+                ),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                this.rightTextData != null
+                    ? Text(
+                        this.rightTextData,
+                        style: Theme.of(context).textTheme.caption,
+                      )
+                    : Container(),
+                SizedBox(width: 10),
+                this.showRightChevron
+                    ? Icon(
+                        Icons.chevron_right,
+                        size: 24,
+                      )
+                    : Container(),
+              ],
+            ),
+          ],
         ),
       ),
     );

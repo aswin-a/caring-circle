@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../styles/textStyles.dart' as TextStyles;
 
 class CCFlatButton extends StatelessWidget {
   final String text;
@@ -17,20 +16,20 @@ class CCFlatButton extends StatelessWidget {
       minWidth: 0,
       child: FlatButton(
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        padding: EdgeInsets.symmetric(horizontal: 0),
+        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
-            this.showBackIcon
-                ? Positioned(
-                    left: -10,
-                    child: Icon(
+            Positioned(
+              left: -10,
+              child: this.showBackIcon
+                  ? Icon(
                       Icons.chevron_left,
                       size: 35,
                       color: Colors.white,
-                    ),
-                  )
-                : Container(),
+                    )
+                  : Container(),
+            ),
             Padding(
               padding: EdgeInsets.only(left: this.showBackIcon ? 20 : 0),
               child: Text(
