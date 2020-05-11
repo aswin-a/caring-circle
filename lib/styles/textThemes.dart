@@ -23,4 +23,10 @@ const textTheme = TextTheme(
     color: Colors.white,
     fontSize: 22,
   ),
+  title: TextStyle(
+    color: Colors.white,
+    fontSize: 28,
+    fontWeight: FontWeight.bold,
+  ),
+  caption: TextStyle(color: Colors.white70),
 );

@@ -35,7 +35,7 @@ class CCFlatButton extends StatelessWidget {
               padding: EdgeInsets.only(left: this.showBackIcon ? 20 : 0),
               child: Text(
                 this.text,
-                style: TextStyles.titleFlatButtonStyle,
+                style: Theme.of(context).textTheme.display1,
               ),
             ),
           ],

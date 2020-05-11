@@ -69,7 +69,7 @@ class TitleBar extends StatelessWidget {
               children: <Widget>[
                 Text(
                   this.title,
-                  style: TextStyles.titleStyle,
+                  style: Theme.of(context).textTheme.title,
                 ),
                 this.showAvatar
                     ? InkWell(

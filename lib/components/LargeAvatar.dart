@@ -65,43 +65,19 @@ class LargeAvatar extends StatelessWidget {
         children: <Widget>[
           InkWell(
             onTap: this.editMode ? () => this.onTapAvatar(context) : null,
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                CircleAvatar(
-                  radius: 66,
-                  backgroundColor: Colors.white,
-                  child: CircleAvatar(
-                    radius: 62,
-                    backgroundColor: Colors.transparent,
-                    backgroundImage: this.imageProvider,
-                  ),
+            child: Center(
+              child: CircleAvatar(
+                radius: 66,
+                backgroundColor: Colors.white,
+                child: CircleAvatar(
+                  radius: 62,
+                  backgroundColor: Colors.transparent,
+                  backgroundImage: this.imageProvider,
                 ),
-                this.editMode
-                    ? Positioned(
-                        top: 110,
-                        left: 52,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(3),
-                          child: Container(
-                            color: Colors.black.withOpacity(0.7),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 4),
-                            child: Text(
-                              'Edit',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    : Container(),
-              ],
+              ),
             ),
           ),
+          SizedBox(height: 10),
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Container(
@@ -125,10 +101,10 @@ class LargeAvatar extends StatelessWidget {
               ),
             ),
           ),
-          this.subtext != null
+          (this.subtext != null && !this.editMode)
               ? Text(
                   this.subtext,
-                  style: TextStyle(color: Colors.white70),
+                  style: Theme.of(context).textTheme.caption,
                 )
               : Container(),
         ],
