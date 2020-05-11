@@ -16,6 +16,8 @@ class LargeAvatar extends StatelessWidget {
   final ImageProvider imageProvider;
   final void Function(File) onImageUpdated;
 
+  final String subtext;
+
   LargeAvatar({
     this.editMode = false,
     this.autoFocus = false,
@@ -24,6 +26,7 @@ class LargeAvatar extends StatelessWidget {
     this.onNameSubmitted,
     this.imageProvider,
     this.onImageUpdated,
+    this.subtext,
   }) {
     if (this.name != null) {
       nameController.text = this.name;
@@ -56,9 +59,9 @@ class LargeAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220,
+      padding: EdgeInsets.only(top: 20, bottom: 10),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           InkWell(
             onTap: this.editMode ? () => this.onTapAvatar(context) : null,
@@ -122,6 +125,12 @@ class LargeAvatar extends StatelessWidget {
               ),
             ),
           ),
+          this.subtext != null
+              ? Text(
+                  this.subtext,
+                  style: TextStyle(color: Colors.white70),
+                )
+              : Container(),
         ],
       ),
     );

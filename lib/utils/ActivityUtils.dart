@@ -13,6 +13,15 @@ Stream<QuerySnapshot> get currentActivityStream {
       .snapshots();
 }
 
+Future<QuerySnapshot> get currentActivityFuture {
+  return Firestore.instance
+      .collection(Constants().firestoreUsersCollection)
+      .document(Constants().currentUserId)
+      .collection(Constants().firestoreUserActivitiesCollection)
+      .where(Constants().firestoreUserActivitiesEntryField, isNull: true)
+      .getDocuments();
+}
+
 Stream<QuerySnapshot> get thisMonthActivitiesStream {
   final currentDate = DateTime.now().toUtc();
   return Firestore.instance

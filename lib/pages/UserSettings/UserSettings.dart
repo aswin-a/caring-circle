@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +18,8 @@ import '../../Models/User.dart';
 import '../../components/MapDialog.dart';
 import '../../components/SettingsBlock.dart';
 import '../../utils/GeofencingUtils.dart';
+import '../../utils/ActivityUtils.dart' as ActivityUtils;
+import 'package:timeago/timeago.dart' as timeago;
 
 class UserSettings extends StatelessWidget {
   static const routeName = '/user-settings';
@@ -52,6 +55,11 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
 
   LatLng tempLocation;
 
+  final currentActivityFuture = ActivityUtils.currentActivityFuture;
+  UserActivity currentActivity;
+  String subtext;
+  Timer refreshTimer;
+
   @override
   void initState() {
     documentSnapshotStream = Firestore.instance
@@ -59,6 +67,12 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
         .document(Constants().currentUserId)
         .snapshots();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    this.refreshTimer?.cancel();
+    super.dispose();
   }
 
   void leftButtonOnTap() {
@@ -94,7 +108,7 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
         imageURL = (this.imageProvider as CachedNetworkImageProvider).url;
       }
 
-      // TODO: Check if location is not deleted when only name is updated 
+      // TODO: Check if location is not deleted when only name is updated
       if (this.user.name != this.name || this.user.imageURL != imageURL) {
         this.user.name = this.name;
         this.user.imageURL = imageURL;
@@ -135,7 +149,8 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
           .collection(Constants().firestoreUsersCollection)
           .document(Constants().currentUserId)
           .updateData(this.user.locationData);
-      initialiseHomeGeofence(this.user.location.home.latitude, this.user.location.home.longitude);
+      initialiseHomeGeofence(
+          this.user.location.home.latitude, this.user.location.home.longitude);
     }
 
     LatLng startLocation;
@@ -161,7 +176,8 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
           .collection(Constants().firestoreUsersCollection)
           .document(Constants().currentUserId)
           .updateData(this.user.locationData);
-      initialiseOfficeGeofence(this.user.location.office.latitude, this.user.location.office.longitude);
+      initialiseOfficeGeofence(this.user.location.office.latitude,
+          this.user.location.office.longitude);
     }
 
     LatLng startLocation;
@@ -181,6 +197,24 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
   bool get isHomeLocationSet => this.user?.location?.home != null ?? false;
   bool get isOfficeLocationSet => this.user?.location?.office != null ?? false;
 
+  updateSubtext() {
+    switch (this.user.locationStatus) {
+      case LocationStatus.home:
+        this.subtext = 'In Home';
+        break;
+      case LocationStatus.office:
+        this.subtext = 'In Office';
+        break;
+      case LocationStatus.outside:
+        final durationText = timeago.format(this.currentActivity.exit.toDate());
+        this.subtext =
+            'Been outside for ${durationText.substring(0, durationText.length - 4)}';
+        break;
+      default:
+        this.subtext = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final routeArgs = ModalRoute.of(context).settings.arguments as Map;
@@ -193,103 +227,120 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
           return true;
         }
       },
-      child: StreamBuilder<DocumentSnapshot>(
-        stream: this.documentSnapshotStream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
-            this.user = User(data: snapshot.data.data);
-            if (!this.editMode && !this.isLoading) {
-              this.name = this.user.name;
-              if (this.user.imageURL != null) {
-                this.imageProvider =
-                    CachedNetworkImageProvider(this.user.imageURL);
-              } else {
-                this.imageProvider =
-                    AssetImage(Constants().defaultUserAvatarAssetPath);
+      child: FutureBuilder<QuerySnapshot>(
+        future: this.currentActivityFuture,
+        builder: (context, currentActivitySnapshot) {
+          return StreamBuilder<DocumentSnapshot>(
+            stream: this.documentSnapshotStream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.active &&
+                  currentActivitySnapshot.connectionState ==
+                      ConnectionState.done) {
+                this.user = User(data: snapshot.data.data);
+                if (!this.editMode && !this.isLoading) {
+                  this.name = this.user.name;
+                  if (this.user.imageURL != null) {
+                    this.imageProvider =
+                        CachedNetworkImageProvider(this.user.imageURL);
+                  } else {
+                    this.imageProvider =
+                        AssetImage(Constants().defaultUserAvatarAssetPath);
+                  }
+                }
+                if (this.user.locationStatus == LocationStatus.outside) {
+                  this.currentActivity = UserActivity(
+                      data: currentActivitySnapshot.data.documents.first.data);
+                  this.refreshTimer = Timer.periodic(
+                      Duration(minutes: 1), (Timer t) => mounted ? this.setState(() {}) : null);
+                } else {
+                  this.refreshTimer?.cancel();
+                }
+                this.updateSubtext();
               }
-            }
-          }
-          return LoadingOverlay(
-            isLoading: this.isLoading,
-            color: Colors.transparent,
-            progressIndicator: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                color: Colors.black.withOpacity(0.3),
-                padding: EdgeInsets.all(10),
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.white,
-                ),
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                TitleBar(
-                  UserSettings.pageTitle,
-                  showLeftButton: true,
-                  showLeftChevron: !this.editMode,
-                  leftButtonTitle:
-                      this.editMode ? 'Cancel' : routeArgs['fromPage'],
-                  leftButtonOnTapFn: this.leftButtonOnTap,
-                  showRightButton: true,
-                  rightButtonTitle: this.editMode ? 'Save' : 'Edit',
-                  rightButtonOnTapFn: () => (this.rightButtonOnTap()),
-                ),
-                LargeAvatar(
-                  editMode: this.editMode,
-                  name: this.name,
-                  onNameChanged: this.onNameChanged,
-                  imageProvider: this.imageProvider,
-                  onImageUpdated: this.onImageUpdated,
-                ),
-                !this.editMode
-                    ? Column(
-                        children: <Widget>[
-                          SubtitleBar('Location'),
-                          SettingsBlock(
-                            'Home',
-                            showRightChevron: true,
-                            leftIcon: Icons.home,
-                            onTap: () => this.getHomeLocation(),
-                            rightTextData:
-                                !this.isHomeLocationSet ? 'unset' : null,
-                          ),
-                          SizedBox(height: 10),
-                          SettingsBlock(
-                            'Office',
-                            showRightChevron: true,
-                            leftIcon: Icons.business_center,
-                            onTap: () => this.getOfficeLocation(),
-                            rightTextData:
-                                !this.isOfficeLocationSet ? 'unset' : null,
-                          ),
-                        ],
-                      )
-                    : Container(),
-                Expanded(
+              return LoadingOverlay(
+                isLoading: this.isLoading,
+                color: Colors.transparent,
+                progressIndicator: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    alignment: Alignment.bottomCenter,
-                    padding: EdgeInsets.only(bottom: 20),
-                    child: !this.editMode
-                        ? FlatButton(
-                            onPressed: () async {
-                              await FirebaseAuth.instance.signOut();
-                              removeHomeGeofence();
-                              removeOfficeGeofence();
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                  Login.routeName, (_) => false);
-                            },
-                            child: Text(
-                              'Logout',
-                              style: Theme.of(context).textTheme.button,
-                            ),
+                    color: Colors.black.withOpacity(0.3),
+                    padding: EdgeInsets.all(10),
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    TitleBar(
+                      UserSettings.pageTitle,
+                      showLeftButton: true,
+                      showLeftChevron: !this.editMode,
+                      leftButtonTitle:
+                          this.editMode ? 'Cancel' : routeArgs['fromPage'],
+                      leftButtonOnTapFn: this.leftButtonOnTap,
+                      showRightButton: true,
+                      rightButtonTitle: this.editMode ? 'Save' : 'Edit',
+                      rightButtonOnTapFn: () => (this.rightButtonOnTap()),
+                    ),
+                    LargeAvatar(
+                      editMode: this.editMode,
+                      name: this.name,
+                      onNameChanged: this.onNameChanged,
+                      imageProvider: this.imageProvider,
+                      onImageUpdated: this.onImageUpdated,
+                      subtext: this.subtext,
+                    ),
+                    !this.editMode
+                        ? Column(
+                            children: <Widget>[
+                              SubtitleBar('Location'),
+                              SettingsBlock(
+                                'Home',
+                                showRightChevron: true,
+                                leftIcon: Icons.home,
+                                onTap: () => this.getHomeLocation(),
+                                rightTextData:
+                                    !this.isHomeLocationSet ? 'unset' : null,
+                              ),
+                              SizedBox(height: 10),
+                              SettingsBlock(
+                                'Office',
+                                showRightChevron: true,
+                                leftIcon: Icons.business_center,
+                                onTap: () => this.getOfficeLocation(),
+                                rightTextData:
+                                    !this.isOfficeLocationSet ? 'unset' : null,
+                              ),
+                            ],
                           )
                         : Container(),
-                  ),
-                )
-              ],
-            ),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.bottomCenter,
+                        padding: EdgeInsets.only(bottom: 20),
+                        child: !this.editMode
+                            ? FlatButton(
+                                onPressed: () async {
+                                  await FirebaseAuth.instance.signOut();
+                                  removeHomeGeofence();
+                                  removeOfficeGeofence();
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      Login.routeName, (_) => false);
+                                },
+                                child: Text(
+                                  'Logout',
+                                  style: Theme.of(context).textTheme.button,
+                                ),
+                              )
+                            : Container(),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
           );
         },
       ),

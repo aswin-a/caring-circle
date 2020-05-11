@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../components/DayChart.dart';
 import '../../components/WeekChart.dart';
 import '../../components/MonthChart.dart';
-import '../../utils/ActivityUtils.dart';
+import '../../utils/ActivityUtils.dart' as ActivityUtils;
 
 class DashboardChart extends StatefulWidget {
   @override
@@ -14,18 +14,18 @@ class DashboardChart extends StatefulWidget {
 }
 
 class _DashboardChartState extends State<DashboardChart> {
-  final activitiesStream = thisMonthActivitiesStream;
-  final latestActivityStream = currentActivityStream;
+  final activitiesStream = ActivityUtils.thisMonthActivitiesStream;
+  final currentActivityStream = ActivityUtils.currentActivityStream;
   List<double> dayData = List.filled(24, 0);
   List<double> weekData;
   List<double> monthData;
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: latestActivityStream,
+      stream: this.currentActivityStream,
       builder: (context, currentActivitySnapshot) {
         return StreamBuilder<QuerySnapshot>(
-          stream: activitiesStream,
+          stream: this.activitiesStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active &&
                 currentActivitySnapshot.connectionState ==
@@ -41,7 +41,7 @@ class _DashboardChartState extends State<DashboardChart> {
                 activitiesData.insert(0, currentActivityData);
               }
               final durationData =
-                  getDurationDataFromOrderedActivities(activitiesData);
+                  ActivityUtils.getDurationDataFromOrderedActivities(activitiesData);
               this.dayData = durationData[0];
               this.weekData = durationData[1];
               this.monthData = durationData[2];
