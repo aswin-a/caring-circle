@@ -44,7 +44,10 @@ class SettingsBlock extends StatelessWidget {
                 this.rightTextData != null
                     ? Text(
                         this.rightTextData,
-                        style: Theme.of(context).textTheme.caption,
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption
+                            .copyWith(color: Colors.black54),
                       )
                     : Container(),
                 SizedBox(width: 10),

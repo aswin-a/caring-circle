@@ -13,6 +13,7 @@ import '../../components/SubtitleBar.dart';
 import '../../components/SettingsBlock.dart';
 import '../../components/MapDialog.dart';
 import '../../constants.dart';
+import '../../utils/GeofencingUtils.dart';
 
 class GetStarted extends StatelessWidget {
   static const routeName = '/get-started';
@@ -161,6 +162,7 @@ class _GetStartedContentState extends State<GetStartedContent> {
 
   @override
   Widget build(BuildContext context) {
+    checkLocationPermission(context);
     return Padding(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -192,7 +194,7 @@ class _GetStartedContentState extends State<GetStartedContent> {
                     children: <Widget>[
                       SubtitleBar('Location'),
                       SettingsBlock(
-                        'Home',
+                        'Home*',
                         showRightChevron: true,
                         leftIcon: Icons.home,
                         onTap: () => this.getHomeLocation(),
@@ -214,6 +216,7 @@ class _GetStartedContentState extends State<GetStartedContent> {
             ),
           ),
           Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
             alignment: Alignment.bottomCenter,
             padding: EdgeInsets.only(bottom: this.isLoading ? 20 : 0),
             child: this.isLoading

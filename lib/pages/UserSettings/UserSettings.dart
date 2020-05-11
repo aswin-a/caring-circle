@@ -87,6 +87,8 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
 
   void rightButtonOnTap() async {
     if (this.editMode) {
+      if (this.name.length == 0) return;
+
       this.editMode = false;
 
       String imageURL;
@@ -194,8 +196,8 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
     );
   }
 
-  bool get isHomeLocationSet => this.user?.location?.home != null ?? false;
-  bool get isOfficeLocationSet => this.user?.location?.office != null ?? false;
+  bool get isHomeLocationSet => this.user?.location?.home != null;
+  bool get isOfficeLocationSet => this.user?.location?.office != null;
 
   updateSubtext() {
     switch (this.user.locationStatus) {

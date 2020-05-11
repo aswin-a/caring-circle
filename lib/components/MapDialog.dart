@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../utils/GeofencingUtils.dart';
+
 void showMapDialog(BuildContext context, String title, Function onComplete,
-    Function(LatLng) onCameraUpdate, [LatLng startLocation]) async {
+    Function(LatLng) onCameraUpdate,
+    [LatLng startLocation]) async {
   if (startLocation == null) {
-    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    startLocation = LatLng(position.latitude, position.longitude);
+    if (await checkLocationPermission(context)) {
+      Position position = await Geolocator()
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      startLocation = LatLng(position.latitude, position.longitude);
+    } else {
+      startLocation = LatLng(27.174991, 78.042123);
+    }
   }
-  
+
   onCameraUpdate(startLocation);
 
   showDialog(

@@ -42,12 +42,30 @@ class __DashboardContentState extends State<_DashboardContent> {
       .snapshots();
 
   User user;
-  var message = 'Nothing';
+  bool geofenceInitialised = false;
 
   @override
   void initState() {
     super.initState();
     initialiseGeofenceManager();
+  }
+
+  void initialiseGeofences() {
+    if (geofenceInitialised) return;
+    checkLocationPermission(context).then((granted) {
+      if (granted) {
+        if (this.user.location.home != null) {
+          final homeLocation = this.user.location.home;
+          initialiseHomeGeofence(homeLocation.latitude, homeLocation.longitude);
+        }
+        if (this.user.location.office != null) {
+          final officeLocation = this.user.location.office;
+          initialiseOfficeGeofence(
+              officeLocation.latitude, officeLocation.longitude);
+        }
+        this.geofenceInitialised = true;
+      }
+    });
   }
 
   @override
@@ -62,14 +80,7 @@ class __DashboardContentState extends State<_DashboardContent> {
           if (this.user.imageURL != null) {
             imageProvider = CachedNetworkImageProvider(this.user.imageURL);
           }
-          if (this.user.location.home != null) {
-            final homeLocation = this.user.location.home;
-            initialiseHomeGeofence(homeLocation.latitude, homeLocation.longitude);
-          }
-          if (this.user.location.office != null) {
-            final officeLocation = this.user.location.office;
-            initialiseOfficeGeofence(officeLocation.latitude, officeLocation.longitude);
-          }
+          this.initialiseGeofences();
         }
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,

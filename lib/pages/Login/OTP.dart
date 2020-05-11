@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../components/CCFlatButton.dart';
+import '../../components/Alert.dart';
 import './utils.dart' as utils;
 
 class OTP extends StatelessWidget {
@@ -49,11 +50,13 @@ class _OTPContentState extends State<OTPContent> {
       utils.onSignInSuccess(context, authResult);
     }).catchError((error) {
       if (error.code == 'ERROR_INVALID_VERIFICATION_CODE') {
-        utils.showAlert(context, 'Incorrect OTP', 'Try Again',
-            'Please make sure you have entered the 6 digit OTP sent to your phone number.');
+        showAlert(context, 'Incorrect OTP', 'Try Again',
+            description:
+                'Please make sure you have entered the 6 digit OTP sent to your phone number.');
       } else {
-        utils.showAlert(context, 'Oops !!!', 'No Problem',
-            'Something went wrong. Please try entering the OTP again.');
+        showAlert(context, 'Oops !!!', 'No Problem',
+            description:
+                'Something went wrong. Please try entering the OTP again.');
       }
       this.setState(() {
         this.isLoading = false;

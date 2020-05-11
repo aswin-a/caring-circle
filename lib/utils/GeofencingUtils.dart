@@ -1,10 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geofencing/geofencing.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:location_permissions/location_permissions.dart';
 
 import '../constants.dart';
 import '../Models/User.dart';
+import '../components/Alert.dart';
 
 const HOME_GEOFENCE_ID = 'home';
 const OFFICE_GEOFENCE_ID = 'office';
@@ -36,11 +39,11 @@ void callback(List<String> ids, Location l, GeofenceEvent e) async {
 
   final user = User(data: (await userDocumentReference.get()).data);
 
-  final activityCollectionReference =
-      userDocumentReference.collection('activity');
+  final activityCollectionReference = userDocumentReference
+      .collection(Constants().firestoreUserActivitiesCollection);
 
   final latestActivityQuerySnapshot = await activityCollectionReference
-      .orderBy('exit', descending: true)
+      .orderBy(Constants().firestoreUserActivitiesExitField, descending: true)
       .limit(1)
       .getDocuments();
 
@@ -63,12 +66,15 @@ void callback(List<String> ids, Location l, GeofenceEvent e) async {
       l.latitude,
       l.longitude,
     );
-    final distanceFromOffice = await Geolocator().distanceBetween(
-      user.location.office.latitude,
-      user.location.office.longitude,
-      l.latitude,
-      l.longitude,
-    );
+    var distanceFromOffice = double.infinity;
+    if (user.location.office != null) {
+      distanceFromOffice = await Geolocator().distanceBetween(
+        user.location.office.latitude,
+        user.location.office.longitude,
+        l.latitude,
+        l.longitude,
+      );
+    }
 
     if ((ids.first == HOME_GEOFENCE_ID &&
             distanceFromOffice > GEOFENCE_RADIUS) ||
@@ -140,4 +146,23 @@ removeOfficeGeofence() {
 
 _reomoveGeofence([String geofenceId = HOME_GEOFENCE_ID]) {
   GeofencingManager.removeGeofenceById(geofenceId);
+}
+
+Future<bool> checkLocationPermission(context) async {
+  var permissionStatus = await LocationPermissions().checkPermissionStatus();
+  if (permissionStatus != PermissionStatus.granted) {
+    permissionStatus = await LocationPermissions().requestPermissions();
+  }
+  if (permissionStatus == PermissionStatus.denied) {
+    showAlert(context, 'Location Permission', 'Open Settings',
+        description:
+            'Device\'s location is required to keep track of your time outside.' +
+                ' Please allow location permission in the Settings app.',
+        onPressedButton: () async {
+      await LocationPermissions().openAppSettings();
+      Navigator.pop(context);
+    });
+    return false;
+  }
+  return true;
 }

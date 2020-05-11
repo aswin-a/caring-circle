@@ -91,7 +91,7 @@ class LargeAvatar extends StatelessWidget {
                     border: InputBorder.none,
                     filled: this.editMode,
                     fillColor: Colors.white.withOpacity(0.3),
-                    hintText: 'Name',
+                    hintText: 'Name*',
                     hintStyle: Theme.of(context).textTheme.display1),
                 showCursor: true,
                 style: Theme.of(context).textTheme.display3,

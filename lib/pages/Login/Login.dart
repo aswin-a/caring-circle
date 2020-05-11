@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import './OTP.dart';
 import './utils.dart' as utils;
+import '../../components/Alert.dart';
 
 class Login extends StatelessWidget {
   static const routeName = '/login';
@@ -58,8 +59,8 @@ class _PhoneNumberState extends State<PhoneNumber> {
           .then((AuthResult authResult) {
         utils.onSignInSuccess(context, authResult);
       }).catchError((error) {
-        utils.showAlert(context, 'Oops !!!', 'No Problem',
-            'Something went wrong. Please try joining again.');
+        showAlert(context, 'Oops !!!', 'No Problem',
+            description: 'Something went wrong. Please try joining again.');
       });
     }
 
@@ -68,8 +69,8 @@ class _PhoneNumberState extends State<PhoneNumber> {
         this.isLoading = false;
       });
 
-      utils.showAlert(context, 'Oops !!!', 'No Problem',
-          'Something went wrong. Please try joining again.');
+      showAlert(context, 'Oops !!!', 'No Problem',
+          description: 'Something went wrong. Please try joining again.');
     }
 
     void _onCodeSent(String verificationId, [int forceResendingToken]) {
