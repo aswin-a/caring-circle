@@ -11,7 +11,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name=".Application"
-        android:label="caring_circle"
+        android:label="Caring Circle"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
