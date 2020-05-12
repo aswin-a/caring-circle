@@ -30,8 +30,8 @@ final AndroidGeofencingSettings androidSettings = AndroidGeofencingSettings(
 void callback(List<String> ids, Location l, GeofenceEvent e) async {
   print('Fences: $ids Location $l Event: $e');
 
-  // TODO: IF null, remove the geofence
   final firebaseUser = await FirebaseAuth.instance.currentUser();
+  if (firebaseUser == null) return;
 
   final userDocumentReference = Firestore.instance
       .collection(Constants().firestoreUsersCollection)
@@ -55,7 +55,7 @@ void callback(List<String> ids, Location l, GeofenceEvent e) async {
 
     if (latestActivity.entry == null) {
       latestActivity.entry = Timestamp.fromDate(DateTime.now().toUtc());
-      latestActivityDocumentSnapshot.reference.setData(latestActivity.data);
+      latestActivityDocumentSnapshot.reference.updateData(latestActivity.data);
     }
   }
 
@@ -80,9 +80,8 @@ void callback(List<String> ids, Location l, GeofenceEvent e) async {
             distanceFromOffice > GEOFENCE_RADIUS) ||
         (ids.first == OFFICE_GEOFENCE_ID &&
             distanceFromHome > GEOFENCE_RADIUS)) {
-      userDocumentReference.setData(
-          {'locationStatus': LocationStatus.outside.toString()},
-          merge: true);
+      userDocumentReference
+          .updateData({'locationStatus': LocationStatus.outside.toString()});
 
       final newActivity = UserActivity();
       newActivity.exit = Timestamp.fromDate(DateTime.now().toUtc());
@@ -90,13 +89,11 @@ void callback(List<String> ids, Location l, GeofenceEvent e) async {
     }
   } else if (e == GeofenceEvent.enter) {
     if (ids[0] == HOME_GEOFENCE_ID) {
-      userDocumentReference.setData(
-          {'locationStatus': LocationStatus.home.toString()},
-          merge: true);
+      userDocumentReference
+          .updateData({'locationStatus': LocationStatus.home.toString()});
     } else if (ids[0] == OFFICE_GEOFENCE_ID) {
-      userDocumentReference.setData(
-          {'locationStatus': LocationStatus.office.toString()},
-          merge: true);
+      userDocumentReference
+          .updateData({'locationStatus': LocationStatus.office.toString()});
     }
   }
 }

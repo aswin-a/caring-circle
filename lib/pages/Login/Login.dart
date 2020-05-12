@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import './OTP.dart';
 import './utils.dart' as utils;
 import '../../components/Alert.dart';
+import '../../utils/GeofencingUtils.dart';
 
 class Login extends StatelessWidget {
   static const routeName = '/login';
@@ -30,6 +31,13 @@ class PhoneNumber extends StatefulWidget {
 }
 
 class _PhoneNumberState extends State<PhoneNumber> {
+  @override
+  void initState() {
+    removeHomeGeofence();
+    removeOfficeGeofence();
+    super.initState();
+  }
+
   @override
   deactivate() {
     this.isLoading = false;
