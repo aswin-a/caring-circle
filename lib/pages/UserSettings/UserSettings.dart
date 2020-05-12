@@ -213,7 +213,7 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
           final durationText =
               timeago.format(this.currentActivity.exit.toDate());
           this.subtext =
-              'Been outside for ${durationText.substring(0, durationText.length - 4)}';
+              'Been outdoors for ${durationText.substring(0, durationText.length - 4)}';
         }
         break;
       default:

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sticky_headers/sticky_headers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../components/TitleBar.dart';
 import '../../components/SubtitleBar.dart';
-import './DashboardCircleCard.dart';
 import '../UserSettings/UserSettings.dart';
 import '../../constants.dart';
 import '../../Models/User.dart';
@@ -94,28 +92,8 @@ class __DashboardContentState extends State<_DashboardContent> {
                   arguments: {'fromPage': 'Dashboard'}),
             ),
             SizedBox(height: 10),
-            Expanded(
-              child: ListView(
-                children: <Widget>[
-                  DashboardChart(),
-                  SizedBox(height: 10),
-                  StickyHeader(
-                    // overlapHeaders: true,
-                    header: Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      child: SubtitleBar('Circles', showRightButton: true),
-                    ),
-                    content: Column(
-                      children: List.generate(15, (idx) {
-                        return idx % 2 == 0
-                            ? DashboardCircleCard()
-                            : SizedBox(height: 10);
-                      }),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            SubtitleBar('Outdoor Time'),
+            DashboardChart(),
           ],
         );
       },

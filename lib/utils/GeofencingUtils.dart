@@ -164,6 +164,9 @@ Future<bool> checkLocationPermission(context) async {
       Navigator.pop(context);
     });
     return false;
+  } else if (permissionStatus == PermissionStatus.granted) {
+    return true;
+  } else {
+    return false;
   }
-  return true;
 }
