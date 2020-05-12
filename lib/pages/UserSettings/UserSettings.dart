@@ -55,7 +55,7 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
 
   LatLng tempLocation;
 
-  final currentActivityFuture = ActivityUtils.currentActivityFuture;
+  final currentActivityStream = ActivityUtils.currentActivityStream;
   UserActivity currentActivity;
   String subtext;
   Timer refreshTimer;
@@ -208,9 +208,12 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
         this.subtext = 'In Office';
         break;
       case LocationStatus.outside:
-        final durationText = timeago.format(this.currentActivity.exit.toDate());
-        this.subtext =
-            'Been outside for ${durationText.substring(0, durationText.length - 4)}';
+        if (this.currentActivity != null) {
+          final durationText =
+              timeago.format(this.currentActivity.exit.toDate());
+          this.subtext =
+              'Been outside for ${durationText.substring(0, durationText.length - 4)}';
+        }
         break;
       default:
         this.subtext = null;
@@ -229,15 +232,15 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
           return true;
         }
       },
-      child: FutureBuilder<QuerySnapshot>(
-        future: this.currentActivityFuture,
+      child: StreamBuilder<QuerySnapshot>(
+        stream: this.currentActivityStream,
         builder: (context, currentActivitySnapshot) {
           return StreamBuilder<DocumentSnapshot>(
             stream: this.documentSnapshotStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.active &&
                   currentActivitySnapshot.connectionState ==
-                      ConnectionState.done) {
+                      ConnectionState.active) {
                 this.user = User(data: snapshot.data.data);
                 if (!this.editMode && !this.isLoading) {
                   this.name = this.user.name;
@@ -249,12 +252,14 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
                         AssetImage(Constants().defaultUserAvatarAssetPath);
                   }
                 }
-                if (this.user.locationStatus == LocationStatus.outside) {
+                if (currentActivitySnapshot.data.documents.length == 1) {
                   this.currentActivity = UserActivity(
                       data: currentActivitySnapshot.data.documents.first.data);
-                  this.refreshTimer = Timer.periodic(
-                      Duration(minutes: 1), (Timer t) => mounted ? this.setState(() {}) : null);
+                  this.refreshTimer?.cancel();
+                  this.refreshTimer = Timer.periodic(Duration(minutes: 1),
+                      (Timer t) => mounted ? this.setState(() {}) : null);
                 } else {
+                  this.currentActivity = null;
                   this.refreshTimer?.cancel();
                 }
                 this.updateSubtext();
