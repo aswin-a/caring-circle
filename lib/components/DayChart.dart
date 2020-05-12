@@ -31,6 +31,7 @@ class DayChart extends StatelessWidget {
         ),
         backgroundColor: Colors.transparent,
         borderData: FlBorderData(show: false),
+        barTouchData: BarTouchData(enabled: false),
         alignment: BarChartAlignment.spaceAround,
         maxY: 65,
         barGroups: List.generate(data.length, (idx) {

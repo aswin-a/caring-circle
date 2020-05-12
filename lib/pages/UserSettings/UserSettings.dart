@@ -143,14 +143,15 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
   }
 
   void getHomeLocation() {
-    void updateHomeLocation() {
-      removeHomeGeofence();
+    void updateHomeLocation() async {
       this.user.location.setHomeLocation(
           this.tempLocation.latitude, this.tempLocation.longitude);
       Firestore.instance
           .collection(Constants().firestoreUsersCollection)
           .document(Constants().currentUserId)
           .updateData(this.user.locationData);
+
+      await removeHomeGeofence();
       initialiseHomeGeofence(
           this.user.location.home.latitude, this.user.location.home.longitude);
     }
@@ -170,14 +171,15 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
   }
 
   void getOfficeLocation() {
-    void updateOfficeLocation() {
-      removeOfficeGeofence();
+    void updateOfficeLocation() async {
       this.user.location.setOfficeLocation(
           this.tempLocation.latitude, this.tempLocation.longitude);
       Firestore.instance
           .collection(Constants().firestoreUsersCollection)
           .document(Constants().currentUserId)
           .updateData(this.user.locationData);
+
+      await removeOfficeGeofence();
       initialiseOfficeGeofence(this.user.location.office.latitude,
           this.user.location.office.longitude);
     }

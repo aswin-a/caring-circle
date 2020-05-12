@@ -136,16 +136,20 @@ void _initialiseGeofence(
   }
 }
 
-removeHomeGeofence() {
-  _reomoveGeofence(HOME_GEOFENCE_ID);
+Future<bool> removeHomeGeofence() async {
+  await _reomoveGeofence(HOME_GEOFENCE_ID);
+  final geofenceIds = await GeofencingManager.getRegisteredGeofenceIds();
+  return geofenceIds.indexOf(HOME_GEOFENCE_ID) == -1;
 }
 
-removeOfficeGeofence() {
-  _reomoveGeofence(OFFICE_GEOFENCE_ID);
+Future<bool> removeOfficeGeofence() async {
+  await _reomoveGeofence(OFFICE_GEOFENCE_ID);
+  final geofenceIds = await GeofencingManager.getRegisteredGeofenceIds();
+  return geofenceIds.indexOf(OFFICE_GEOFENCE_ID) == -1;
 }
 
-_reomoveGeofence([String geofenceId = HOME_GEOFENCE_ID]) {
-  GeofencingManager.removeGeofenceById(geofenceId);
+Future<void> _reomoveGeofence([String geofenceId = HOME_GEOFENCE_ID]) async {
+  await GeofencingManager.removeGeofenceById(geofenceId);
 }
 
 Future<bool> checkLocationPermission(context) async {
