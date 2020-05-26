@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../constants.dart';
+
 class Splash extends StatelessWidget {
   static const routeName = '/splash';
   static const pageTitle = 'Splash';
@@ -9,10 +11,12 @@ class Splash extends StatelessWidget {
     return Material(
       type: MaterialType.canvas,
       color: Theme.of(context).scaffoldBackgroundColor,
-      child: SafeArea(
-        bottom: false,
-        minimum: EdgeInsets.symmetric(horizontal: 15),
-        child: Container(),
+      child: Center(
+        child: Image.asset(
+          Constants().logoAssetPath,
+          height: 139,
+          width: 139,
+        ),
       ),
     );
   }

@@ -36,7 +36,8 @@ class LargeAvatar extends StatelessWidget {
   }
 
   void onTapAvatar(BuildContext context) {
-    FocusScope.of(context).unfocus(focusPrevious: true);
+    FocusScope.of(context)
+        .unfocus(disposition: UnfocusDisposition.previouslyFocusedChild);
     ImagePicker.pickImage(source: ImageSource.gallery).then((imageFile) {
       ImageCropper.cropImage(
           sourcePath: imageFile.path,

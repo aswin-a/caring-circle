@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './pages/Splash/Splash.dart';
 import './pages/Login/Login.dart';
@@ -11,6 +12,7 @@ import './pages/Dashboard/Dashboard.dart';
 import './pages/UserSettings/UserSettings.dart';
 import './styles/textThemes.dart';
 import './constants.dart';
+import './pages/Permission/Permission.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +21,7 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  Crashlytics.instance.enableInDevMode = true;
+  Crashlytics.instance.enableInDevMode = false;
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
 
   runApp(CaringCircle());
@@ -28,10 +30,11 @@ void main() async {
 class CaringCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    precacheImage(AssetImage(Constants().logoAssetPath), context);
     return MaterialApp(
       title: 'Caring Circle',
       theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFF044B7F) ,
+        scaffoldBackgroundColor: Color(0xFF044B7F),
         textTheme: textTheme,
       ),
       home: FutureBuilder(
@@ -40,7 +43,21 @@ class CaringCircle extends StatelessWidget {
           if (firebaseUserSnapshot.connectionState == ConnectionState.done) {
             if (firebaseUserSnapshot.data != null) {
               Constants().currentUserId = firebaseUserSnapshot.data.uid;
-              return Dashboard();
+              return FutureBuilder<DocumentSnapshot>(
+                future: Firestore.instance
+                    .collection(Constants().firestoreUsersCollection)
+                    .document(Constants().currentUserId)
+                    .get(),
+                builder: (context, documentSnapshot) {
+                  if (documentSnapshot.connectionState ==
+                      ConnectionState.done) {
+                    return documentSnapshot.data.data == null
+                        ? GetStarted()
+                        : Permission();
+                  }
+                  return Splash();
+                },
+              );
             } else {
               return Login();
             }
@@ -52,6 +69,7 @@ class CaringCircle extends StatelessWidget {
         Splash.routeName: (ctx) => Splash(),
         Login.routeName: (ctx) => Login(),
         OTP.routeName: (ctx) => OTP(),
+        Permission.routeName: (ctx) => Permission(),
         GetStarted.routeName: (ctx) => GetStarted(),
         Dashboard.routeName: (ctx) => Dashboard(),
         UserSettings.routeName: (ctx) => UserSettings(),

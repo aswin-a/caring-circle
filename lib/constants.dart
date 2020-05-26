@@ -19,6 +19,7 @@ class Constants {
   String firebaseStorageUserImagesPath = 'userImages';
 
   String defaultUserAvatarAssetPath = 'assets/images/defaultAvatarLarge.png';
+  String locationPermissionAssetPath = 'assets/images/location_permission.png';
   String logoAssetPath = 'assets/logo.png';
 }
 

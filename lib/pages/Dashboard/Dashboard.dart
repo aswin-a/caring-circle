@@ -50,7 +50,7 @@ class __DashboardContentState extends State<_DashboardContent> {
 
   void initialiseGeofences() {
     if (geofenceInitialised) return;
-    checkLocationPermission(context).then((granted) {
+    checkLocationPermission().then((granted) {
       if (granted) {
         if (this.user.location.home != null) {
           final homeLocation = this.user.location.home;

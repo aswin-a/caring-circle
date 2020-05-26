@@ -7,13 +7,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../Models/User.dart';
-import '../Dashboard/Dashboard.dart';
+import '../Permission/Permission.dart';
 import '../../components/LargeAvatar.dart';
 import '../../components/SubtitleBar.dart';
 import '../../components/SettingsBlock.dart';
 import '../../components/MapDialog.dart';
 import '../../constants.dart';
-import '../../utils/GeofencingUtils.dart';
 
 class GetStarted extends StatelessWidget {
   static const routeName = '/get-started';
@@ -109,7 +108,7 @@ class _GetStartedContentState extends State<GetStartedContent> {
     });
 
     Navigator.of(context).pushNamedAndRemoveUntil(
-        Dashboard.routeName, (Route<dynamic> route) => false);
+        Permission.routeName, (Route<dynamic> route) => false);
   }
 
   void onNameChanged(String name) {
@@ -162,7 +161,6 @@ class _GetStartedContentState extends State<GetStartedContent> {
 
   @override
   Widget build(BuildContext context) {
-    checkLocationPermission(context);
     return Padding(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),

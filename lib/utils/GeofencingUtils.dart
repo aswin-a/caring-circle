@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geofencing/geofencing.dart';
@@ -7,7 +6,6 @@ import 'package:location_permissions/location_permissions.dart';
 
 import '../constants.dart';
 import '../Models/User.dart';
-import '../components/Alert.dart';
 
 const HOME_GEOFENCE_ID = 'home';
 const OFFICE_GEOFENCE_ID = 'office';
@@ -149,24 +147,12 @@ Future<void> _reomoveGeofence([String geofenceId = HOME_GEOFENCE_ID]) async {
   await GeofencingManager.removeGeofenceById(geofenceId);
 }
 
-Future<bool> checkLocationPermission(context) async {
-  var permissionStatus = await LocationPermissions().checkPermissionStatus();
+Future<bool> checkLocationPermission() async {
+  var permissionStatus = await LocationPermissions()
+      .checkPermissionStatus(level: LocationPermissionLevel.locationAlways);
   if (permissionStatus != PermissionStatus.granted) {
-    permissionStatus = await LocationPermissions().requestPermissions();
+    permissionStatus = await LocationPermissions().requestPermissions(
+        permissionLevel: LocationPermissionLevel.locationAlways);
   }
-  if (permissionStatus == PermissionStatus.denied) {
-    showAlert(context, 'Location Permission', 'Open Settings',
-        description:
-            'Device\'s location is required to keep track of your time outside.' +
-                ' Please allow location permission in the Settings app.',
-        onPressedButton: () async {
-      await LocationPermissions().openAppSettings();
-      Navigator.pop(context);
-    });
-    return false;
-  } else if (permissionStatus == PermissionStatus.granted) {
-    return true;
-  } else {
-    return false;
-  }
+  return permissionStatus == PermissionStatus.granted;
 }
