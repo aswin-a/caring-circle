@@ -43,7 +43,7 @@ class _GetStartedContentState extends State<GetStartedContent> {
 
   String name;
   ImageProvider imageProvider =
-      AssetImage(Constants().defaultUserAvatarAssetPath);
+      AssetImage(Constants().defaultUserAvatarLargeBlueAssetPath);
 
   LatLng homeLocation;
   LatLng officeLocation;

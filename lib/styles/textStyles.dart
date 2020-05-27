@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 const squareBoxTitleStyle = TextStyle(
   fontSize: 12,
-  fontWeight: FontWeight.bold,
 );
 
 const squareBoxValueStyle = TextStyle(
-  fontSize: 20,
+  fontSize: 14,
+  fontWeight: FontWeight.w500
 );
 
 const squareBoxCaptionStyle = TextStyle(

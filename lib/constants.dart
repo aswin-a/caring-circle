@@ -18,8 +18,17 @@ class Constants {
 
   String firebaseStorageUserImagesPath = 'userImages';
 
-  String defaultUserAvatarAssetPath = 'assets/images/defaultAvatarLarge.png';
-  String locationPermissionAssetPath = 'assets/images/location_permission.png';
+  String defaultUserAvatarBlueAssetPath = 'assets/images/defaultUserAvatarBlue.png';
+  String defaultUserAvatarWhiteAssetPath = 'assets/images/defaultUserAvatarWhite.png';
+  String defaultUserAvatarLargeBlueAssetPath = 'assets/images/defaultUserAvatarLargeBlue.png';
+  String defaultUserAvatarLargeWhiteAssetPath = 'assets/images/defaultUserAvatarLargeWhite.png';
+
+  String defaultCircleAvatarBlueAssetPath = 'assets/images/defaultCircleAvatarBlue.png';
+  String defaultCircleAvatarWhiteAssetPath = 'assets/images/defaultCircleAvatarWhite.png';
+  String defaultCircleAvatarLargeBlueAssetPath = 'assets/images/defaultCircleAvatarLargeBlue.png';
+  String defaultCircleAvatarLargeWhiteAssetPath = 'assets/images/defaultCircleAvatarLargeWhite.png';
+
+  String locationPermissionAssetPath = 'assets/images/locationPermission.png';
   String logoAssetPath = 'assets/logo.png';
 }
 

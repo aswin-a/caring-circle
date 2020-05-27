@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../components/TitleBar.dart';
 import '../../components/SubtitleBar.dart';
+import '../../components/SummaryCard.dart';
 import '../UserSettings/UserSettings.dart';
 import '../../constants.dart';
 import '../../Models/User.dart';
@@ -72,7 +73,7 @@ class __DashboardContentState extends State<_DashboardContent> {
       stream: userSnapshotStream,
       builder: (context, snapshot) {
         ImageProvider imageProvider =
-            AssetImage(Constants().defaultUserAvatarAssetPath);
+            AssetImage(Constants().defaultUserAvatarBlueAssetPath);
         if (snapshot.connectionState == ConnectionState.active) {
           this.user = User(data: snapshot.data.data);
           if (this.user.imageURL != null) {
@@ -94,6 +95,11 @@ class __DashboardContentState extends State<_DashboardContent> {
             SizedBox(height: 10),
             SubtitleBar('Outdoor Time'),
             DashboardChart(),
+            SizedBox(height: 10),
+            SubtitleBar('Circles', showRightButton: true,),
+            SummaryCard(user: this.user),
+            SizedBox(height: 10),
+            SummaryCard(user: this.user),
           ],
         );
       },

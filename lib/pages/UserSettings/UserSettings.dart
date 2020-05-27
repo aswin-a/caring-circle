@@ -48,7 +48,7 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
 
   String name;
   ImageProvider imageProvider =
-      AssetImage(Constants().defaultUserAvatarAssetPath);
+      AssetImage(Constants().defaultUserAvatarLargeBlueAssetPath);
 
   Stream<DocumentSnapshot> documentSnapshotStream;
   User user;
@@ -250,7 +250,7 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
                         CachedNetworkImageProvider(this.user.imageURL);
                   } else {
                     this.imageProvider =
-                        AssetImage(Constants().defaultUserAvatarAssetPath);
+                        AssetImage(Constants().defaultUserAvatarLargeBlueAssetPath);
                   }
                 }
                 if (currentActivitySnapshot.data.documents.length == 1) {

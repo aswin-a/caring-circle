@@ -7,6 +7,10 @@ class User {
   UserLocation _location = UserLocation();
   LocationStatus _locationStatus;
 
+  String _todayOutdoorTime = '24 hrs 30 mins';
+  String _weekOutdoorTime = '24 hrs 30 mins';
+  String _monthOutdoorTime = '24 hrs 30 mins';
+
   User({Map<String, Object> data}) {
     if (data != null) {
       this._name = data['name'];
@@ -32,6 +36,15 @@ class User {
 
   String get imageURL => this._imageURL;
   set imageURL(String imageURL) => this._imageURL = imageURL;
+  
+  String get todayOutdoorTime => this._todayOutdoorTime;
+  set todayOutdoorTime(String imageURL) => this._todayOutdoorTime = imageURL;
+
+  String get weekOutdoorTime => this._weekOutdoorTime;
+  set weekOutdoorTime(String imageURL) => this._weekOutdoorTime = imageURL;
+
+  String get monthOutdoorTime => this._monthOutdoorTime;
+  set monthOutdoorTime(String imageURL) => this._monthOutdoorTime = imageURL;
 
   LocationStatus get locationStatus => this._locationStatus;
   set locationStatus(LocationStatus locationStatus) =>

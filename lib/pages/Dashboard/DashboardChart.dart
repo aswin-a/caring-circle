@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../components/DayChart.dart';
+import '../../components/TodayChart.dart';
 import '../../components/WeekChart.dart';
 import '../../components/MonthChart.dart';
 import '../../utils/ActivityUtils.dart' as ActivityUtils;
@@ -74,7 +74,7 @@ class _DashboardChartState extends State<DashboardChart> {
                       Expanded(
                         child: TabBarView(
                           children: [
-                            DayChart(this.dayData),
+                            TodayChart(this.dayData),
                             WeekChart(this.weekData),
                             MonthChart(this.monthData),
                           ],
