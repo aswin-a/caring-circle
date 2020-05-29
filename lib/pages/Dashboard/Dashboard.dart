@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 
 import '../../components/TitleBar.dart';
 import '../../components/SubtitleBar.dart';
@@ -22,7 +23,6 @@ class Dashboard extends StatelessWidget {
       color: Theme.of(context).scaffoldBackgroundColor,
       child: SafeArea(
         bottom: false,
-        minimum: EdgeInsets.symmetric(horizontal: 15),
         child: _DashboardContent(),
       ),
     );
@@ -92,14 +92,23 @@ class __DashboardContentState extends State<_DashboardContent> {
                   UserSettings.routeName,
                   arguments: {'fromPage': 'Dashboard'}),
             ),
-            SizedBox(height: 10),
-            SubtitleBar('Outdoor Time'),
-            DashboardChart(),
-            SizedBox(height: 10),
-            SubtitleBar('Circles', showRightButton: true),
-            this.user != null
-                ? Expanded(child: DashboardCirclesList(user: this.user))
-                : Container(),
+            Expanded(
+              child: ListView(
+                children: <Widget>[
+                  StickyHeader(
+                    header: SubtitleBar('Outdoor Time'),
+                    content: DashboardChart(),
+                  ),
+                  SizedBox(height: 10),
+                  StickyHeader(
+                    header: SubtitleBar('Circles', showRightButton: true),
+                    content: this.user != null
+                        ? DashboardCirclesList(user: this.user)
+                        : Container(),
+                  ),
+                ],
+              ),
+            ),
           ],
         );
       },

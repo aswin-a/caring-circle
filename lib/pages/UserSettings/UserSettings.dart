@@ -30,7 +30,6 @@ class UserSettings extends StatelessWidget {
       type: MaterialType.canvas,
       color: Theme.of(context).scaffoldBackgroundColor,
       child: SafeArea(
-        minimum: EdgeInsets.symmetric(horizontal: 15),
         child: _UserSettingsContent(),
       ),
     );

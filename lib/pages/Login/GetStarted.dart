@@ -25,7 +25,6 @@ class GetStarted extends StatelessWidget {
       color: Theme.of(context).scaffoldBackgroundColor,
       child: SafeArea(
         bottom: false,
-        minimum: EdgeInsets.symmetric(horizontal: 15),
         child: GetStartedContent(),
       ),
     );
@@ -171,21 +170,28 @@ class _GetStartedContentState extends State<GetStartedContent> {
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 44),
-                  Text('Let\'s get started.',
-                      style: Theme.of(context).textTheme.display4),
-                  SizedBox(height: 10),
-                  Center(
-                    child: LargeAvatar(
-                      editMode: true,
-                      autoFocus: false,
-                      name: this.name,
-                      onNameChanged: this.onNameChanged,
-                      onNameSubmitted: (_) => this.onTapContinue(context),
-                      imageProvider: imageProvider,
-                      onImageUpdated: this.onImageUpdated,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(height: 44),
+                        Text('Let\'s get started.',
+                            style: Theme.of(context).textTheme.display4),
+                        SizedBox(height: 10),
+                        Center(
+                          child: LargeAvatar(
+                            editMode: true,
+                            autoFocus: false,
+                            name: this.name,
+                            onNameChanged: this.onNameChanged,
+                            onNameSubmitted: (_) => this.onTapContinue(context),
+                            imageProvider: imageProvider,
+                            onImageUpdated: this.onImageUpdated,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Column(
@@ -216,7 +222,7 @@ class _GetStartedContentState extends State<GetStartedContent> {
           Container(
             color: Theme.of(context).scaffoldBackgroundColor,
             alignment: Alignment.bottomCenter,
-            padding: EdgeInsets.only(bottom: this.isLoading ? 20 : 0),
+            padding: EdgeInsets.symmetric(vertical: this.isLoading ? 20 : 5),
             child: this.isLoading
                 ? CircularProgressIndicator(
                     backgroundColor: Colors.white,

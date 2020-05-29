@@ -31,7 +31,8 @@ class TitleBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 88,
+      color: Theme.of(context).scaffoldBackgroundColor,
+      padding: EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -88,6 +89,7 @@ class TitleBar extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(height: 10),
         ],
       ),
     );

@@ -15,51 +15,59 @@ class SettingsBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(10),
-      onTap: this.onTap,
-      child: Ink(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        height: 44,
-        decoration: ShapeDecoration(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            color: Colors.white),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Row(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: this.onTap,
+          child: Ink(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            height: 44,
+            decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                color: Colors.white),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                this.leftIcon != null ? Icon(leftIcon, size: 24) : Container(),
-                SizedBox(width: 10),
-                Text(
-                  this.data,
-                  style: Theme.of(context).textTheme.body2,
+                Row(
+                  children: <Widget>[
+                    this.leftIcon != null
+                        ? Icon(leftIcon, size: 24)
+                        : Container(),
+                    SizedBox(width: 10),
+                    Text(
+                      this.data,
+                      style: Theme.of(context).textTheme.body2,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    this.rightTextData != null
+                        ? Text(
+                            this.rightTextData,
+                            style: Theme.of(context)
+                                .textTheme
+                                .caption
+                                .copyWith(color: Colors.black54),
+                          )
+                        : Container(),
+                    SizedBox(width: 10),
+                    this.showRightChevron
+                        ? Icon(
+                            Icons.chevron_right,
+                            size: 24,
+                          )
+                        : Container(),
+                  ],
                 ),
               ],
             ),
-            Row(
-              children: <Widget>[
-                this.rightTextData != null
-                    ? Text(
-                        this.rightTextData,
-                        style: Theme.of(context)
-                            .textTheme
-                            .caption
-                            .copyWith(color: Colors.black54),
-                      )
-                    : Container(),
-                SizedBox(width: 10),
-                this.showRightChevron
-                    ? Icon(
-                        Icons.chevron_right,
-                        size: 24,
-                      )
-                    : Container(),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );

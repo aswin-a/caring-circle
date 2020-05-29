@@ -36,6 +36,7 @@ class CaringCircle extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Color(0xFF044B7F),
         textTheme: textTheme,
+        accentColor: Color(0xFFCCCCCC),
       ),
       home: FutureBuilder(
         future: FirebaseAuth.instance.currentUser(),

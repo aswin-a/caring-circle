@@ -47,41 +47,44 @@ class _DashboardChartState extends State<DashboardChart> {
               this.weekData = durationData[1];
               this.monthData = durationData[2];
             }
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                color: Colors.white24,
-                height: 220,
-                child: DefaultTabController(
-                  length: 3,
-                  child: Column(
-                    children: <Widget>[
-                      TabBar(
-                        tabs: [
-                          Tab(text: 'Day'),
-                          Tab(text: 'Week'),
-                          Tab(text: 'Month'),
-                        ],
-                        labelColor: Theme.of(context).scaffoldBackgroundColor,
-                        unselectedLabelColor: Colors.white60,
-                        indicator: BubbleTabIndicator(
-                          indicatorColor: Colors.white,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 0, vertical: 3),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            TodayChart(this.dayData),
-                            WeekChart(this.weekData),
-                            MonthChart(this.monthData),
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.white24,
+                  height: 220,
+                  child: DefaultTabController(
+                    length: 3,
+                    child: Column(
+                      children: <Widget>[
+                        TabBar(
+                          tabs: [
+                            Tab(text: 'Day'),
+                            Tab(text: 'Week'),
+                            Tab(text: 'Month'),
                           ],
+                          labelColor: Theme.of(context).scaffoldBackgroundColor,
+                          unselectedLabelColor: Colors.white60,
+                          indicator: BubbleTabIndicator(
+                            indicatorColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 3),
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 10),
+                        Expanded(
+                          child: TabBarView(
+                            children: [
+                              TodayChart(this.dayData),
+                              WeekChart(this.weekData),
+                              MonthChart(this.monthData),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

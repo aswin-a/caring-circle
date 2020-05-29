@@ -31,6 +31,9 @@ class DashboardCirclesList extends StatelessWidget {
           final circlesList =
               documentSnapshotList.map((e) => Circle(data: e.data)).toList();
           return ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             separatorBuilder: (ctx, index) => SizedBox(height: 10),
             itemCount: circlesList.length,
             itemBuilder: (BuildContext ctx, int index) {
