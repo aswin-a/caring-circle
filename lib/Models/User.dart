@@ -1,20 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../constants.dart';
+import './Activities.dart';
 
 class User {
   String _name;
   String _imageURL;
+  List<String> _circles = [];
   UserLocation _location = UserLocation();
   LocationStatus _locationStatus;
-
-  String _todayOutdoorTime = '24 hrs 30 mins';
-  String _weekOutdoorTime = '24 hrs 30 mins';
-  String _monthOutdoorTime = '24 hrs 30 mins';
+  ActivitiesDuration _activitiesDuration;
 
   User({Map<String, Object> data}) {
     if (data != null) {
       this._name = data['name'];
       this._imageURL = data['imageURL'];
+      for (var circleId in (data['circles'] as List)) {
+        this._circles.add(circleId.toString());
+      }
 
       final locationStatus = data['locationStatus'];
       if (locationStatus == LocationStatus.home.toString()) {
@@ -36,15 +39,8 @@ class User {
 
   String get imageURL => this._imageURL;
   set imageURL(String imageURL) => this._imageURL = imageURL;
-  
-  String get todayOutdoorTime => this._todayOutdoorTime;
-  set todayOutdoorTime(String imageURL) => this._todayOutdoorTime = imageURL;
 
-  String get weekOutdoorTime => this._weekOutdoorTime;
-  set weekOutdoorTime(String imageURL) => this._weekOutdoorTime = imageURL;
-
-  String get monthOutdoorTime => this._monthOutdoorTime;
-  set monthOutdoorTime(String imageURL) => this._monthOutdoorTime = imageURL;
+  List<String> get circles => this._circles;
 
   LocationStatus get locationStatus => this._locationStatus;
   set locationStatus(LocationStatus locationStatus) =>
@@ -63,6 +59,10 @@ class User {
 
   Map<String, Object> get data =>
       {}..addAll(this.userData)..addAll(this.locationData);
+
+  ActivitiesDuration get activitiesDuration => this._activitiesDuration;
+  set activitiesDuration(ActivitiesDuration activitiesDuration) =>
+      this._activitiesDuration = activitiesDuration;
 }
 
 class UserLocation {

@@ -16,6 +16,8 @@ class Constants {
   String firestoreUserActivitiesExitField = 'exit';
   String firestoreUserActivitiesEntryField = 'entry';
 
+  String firestoreCirclesCollection = 'circles';
+
   String firebaseStorageUserImagesPath = 'userImages';
 
   String defaultUserAvatarBlueAssetPath = 'assets/images/defaultUserAvatarBlue.png';

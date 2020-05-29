@@ -14,9 +14,9 @@ class DashboardChart extends StatefulWidget {
 }
 
 class _DashboardChartState extends State<DashboardChart> {
-  final activitiesStream = ActivityUtils.thisMonthActivitiesStream;
-  final currentActivityStream = ActivityUtils.currentActivityStream;
-  List<double> dayData = List.filled(24, 0);
+  final activitiesStream = ActivityUtils.getThisMonthActivitiesStream();
+  final currentActivityStream = ActivityUtils.getCurrentActivityStream();
+  List<double> dayData;
   List<double> weekData;
   List<double> monthData;
   @override
@@ -41,7 +41,8 @@ class _DashboardChartState extends State<DashboardChart> {
                 activitiesData.insert(0, currentActivityData);
               }
               final durationData =
-                  ActivityUtils.getDurationDataFromOrderedActivities(activitiesData);
+                  ActivityUtils.getDurationDataFromOrderedActivities(
+                      activitiesData);
               this.dayData = durationData[0];
               this.weekData = durationData[1];
               this.monthData = durationData[2];

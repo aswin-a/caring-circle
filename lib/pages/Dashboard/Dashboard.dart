@@ -4,12 +4,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../components/TitleBar.dart';
 import '../../components/SubtitleBar.dart';
-import '../../components/SummaryCard.dart';
 import '../UserSettings/UserSettings.dart';
 import '../../constants.dart';
 import '../../Models/User.dart';
 import '../../utils/GeofencingUtils.dart';
 import './DashboardChart.dart';
+import './DashboardCirclesList.dart';
 
 class Dashboard extends StatelessWidget {
   static const routeName = '/dashboard';
@@ -96,10 +96,10 @@ class __DashboardContentState extends State<_DashboardContent> {
             SubtitleBar('Outdoor Time'),
             DashboardChart(),
             SizedBox(height: 10),
-            SubtitleBar('Circles', showRightButton: true,),
-            SummaryCard(user: this.user),
-            SizedBox(height: 10),
-            SummaryCard(user: this.user),
+            SubtitleBar('Circles', showRightButton: true),
+            this.user != null
+                ? Expanded(child: DashboardCirclesList(user: this.user))
+                : Container(),
           ],
         );
       },

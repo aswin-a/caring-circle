@@ -4,10 +4,10 @@ import '../constants.dart';
 
 enum DurationRange { day, week, month }
 
-Stream<QuerySnapshot> get currentActivityStream {
+Stream<QuerySnapshot> getCurrentActivityStream([userId]) {
   return Firestore.instance
       .collection(Constants().firestoreUsersCollection)
-      .document(Constants().currentUserId)
+      .document(userId != null ? userId : Constants().currentUserId)
       .collection(Constants().firestoreUserActivitiesCollection)
       .where(Constants().firestoreUserActivitiesEntryField, isNull: true)
       .snapshots();
@@ -22,11 +22,11 @@ Future<QuerySnapshot> get currentActivityFuture {
       .getDocuments();
 }
 
-Stream<QuerySnapshot> get thisMonthActivitiesStream {
+Stream<QuerySnapshot> getThisMonthActivitiesStream([userId]) {
   final currentDate = DateTime.now().toUtc();
   return Firestore.instance
       .collection(Constants().firestoreUsersCollection)
-      .document(Constants().currentUserId)
+      .document(userId != null ? userId : Constants().currentUserId)
       .collection(Constants().firestoreUserActivitiesCollection)
       .where(
         Constants().firestoreUserActivitiesEntryField,
@@ -40,10 +40,10 @@ Stream<QuerySnapshot> get thisMonthActivitiesStream {
 
 List<List<double>> getDurationDataFromOrderedActivities(
     List<Map<String, dynamic>> data) {
-  var exitTime;
-  var entryTime;
-  var durationStart;
-  var durationEnd;
+  DateTime exitTime;
+  DateTime entryTime;
+  DateTime durationStart;
+  DateTime durationEnd;
 
   final currentDate = DateTime.now();
 
@@ -59,20 +59,20 @@ List<List<double>> getDurationDataFromOrderedActivities(
             currentDate.year, currentDate.month, currentDate.day, index);
         durationEnd = DateTime(
                 currentDate.year, currentDate.month, currentDate.day, index + 1)
-            .subtract(Duration(seconds: 1));
+            .subtract(Duration(milliseconds: 1));
         break;
       case DurationRange.week:
         durationStart = DateTime(currentDate.year, currentDate.month,
             currentDate.day - (currentDate.weekday % 7) + index);
         durationEnd = DateTime(currentDate.year, currentDate.month,
                 currentDate.day - (currentDate.weekday % 7) + index + 1)
-            .subtract(Duration(seconds: 1));
+            .subtract(Duration(milliseconds: 1));
         break;
       case DurationRange.month:
         durationStart =
             DateTime(currentDate.year, currentDate.month, index + 1);
         durationEnd = DateTime(currentDate.year, currentDate.month, index + 2)
-            .subtract(Duration(seconds: 1));
+            .subtract(Duration(milliseconds: 1));
         break;
       default:
     }
@@ -100,7 +100,8 @@ List<List<double>> getDurationDataFromOrderedActivities(
           currentDate.month,
           currentDate.day - (currentDate.weekday % 7),
         );
-        result = List.filled((currentDate.weekday % 7) + 1, 10e-5, growable: true);
+        result =
+            List.filled((currentDate.weekday % 7) + 1, 10e-5, growable: true);
         result.addAll(List.filled(durationRangeLength - result.length, 0));
         break;
       case DurationRange.month:
@@ -117,23 +118,23 @@ List<List<double>> getDurationDataFromOrderedActivities(
     while ((durationIndex >= 0) && (dataIndex < data.length)) {
       setDurationStartEndTime(durationIndex, durationRange);
       setExitEntryTime(dataIndex);
-      if (entryTime.isAfter(cutoffTime)) {
-        if (entryTime.isBefore(durationEnd) &&
-            exitTime.isAfter(durationStart)) {
+      if (!entryTime.isBefore(cutoffTime)) {
+        if (!entryTime.isAfter(durationEnd) &&
+            !exitTime.isBefore(durationStart)) {
           result[durationIndex] += entryTime.difference(exitTime).inMinutes;
           dataIndex += 1;
-        } else if (entryTime.isAfter(durationEnd) &&
-            exitTime.isBefore(durationStart)) {
+        } else if (!entryTime.isBefore(durationEnd) &&
+            !exitTime.isAfter(durationStart)) {
           result[durationIndex] += 60;
           durationIndex -= 1;
-        } else if (entryTime.isAfter(durationEnd) &&
-            exitTime.isAfter(durationStart) &&
-            exitTime.isBefore(durationEnd)) {
+        } else if (!entryTime.isBefore(durationEnd) &&
+            !exitTime.isBefore(durationStart) &&
+            !exitTime.isAfter(durationEnd)) {
           result[durationIndex] += durationEnd.difference(exitTime).inMinutes;
           dataIndex += 1;
-        } else if (entryTime.isBefore(durationEnd) &&
-            entryTime.isAfter(durationStart) &&
-            exitTime.isBefore(durationStart)) {
+        } else if (!entryTime.isAfter(durationEnd) &&
+            !entryTime.isBefore(durationStart) &&
+            !exitTime.isAfter(durationStart)) {
           result[durationIndex] +=
               entryTime.difference(durationStart).inMinutes;
           durationIndex -= 1;

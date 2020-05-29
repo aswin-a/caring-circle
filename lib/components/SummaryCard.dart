@@ -1,28 +1,38 @@
 import 'package:flutter/material.dart';
 
 import '../Models/User.dart';
+import '../Models/Circle.dart';
 import '../constants.dart';
 import '../styles/textStyles.dart' as TextStyles;
 
 class SummaryCard extends StatelessWidget {
   final User user;
+  final Circle circle;
   final bool forCircle;
   final Function onTap;
 
   SummaryCard({
     this.user,
+    this.circle,
     this.onTap,
     this.forCircle = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final avatarAssetPath =
-        this.forCircle ? Constants().defaultCircleAvatarWhiteAssetPath: Constants().defaultUserAvatarWhiteAssetPath;
-    final title = this.forCircle ? null : user.name;
-    final todayOutdoorTime = this.forCircle ? null : user.todayOutdoorTime;
-    final weekOutdoorTime = this.forCircle ? null : user.weekOutdoorTime;
-    final monthOutdoorTime = this.forCircle ? null : user.monthOutdoorTime;
+    final avatarAssetPath = this.forCircle
+        ? Constants().defaultCircleAvatarWhiteAssetPath
+        : Constants().defaultUserAvatarWhiteAssetPath;
+    final title = this.forCircle ? circle.name : user.name;
+    final todayOutdoorTime = this.forCircle
+        ? circle.activitiesDuration.todayOutdoorTime
+        : user.activitiesDuration.todayOutdoorTime;
+    final weekOutdoorTime = this.forCircle
+        ? circle.activitiesDuration.weekOutdoorTime
+        : user.activitiesDuration.weekOutdoorTime;
+    final monthOutdoorTime = this.forCircle
+        ? circle.activitiesDuration.monthOutdoorTime
+        : user.activitiesDuration.monthOutdoorTime;
 
     return InkWell(
       borderRadius: BorderRadius.circular(10),
@@ -44,10 +54,12 @@ class SummaryCard extends StatelessWidget {
                   children: <Widget>[
                     CircleAvatar(
                       radius: 20,
-                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
                       child: CircleAvatar(
                         radius: 18,
-                        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
                         backgroundImage: AssetImage(avatarAssetPath),
                       ),
                     ),
@@ -58,7 +70,7 @@ class SummaryCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                this.forCircle
+                this.onTap != null
                     ? Icon(
                         Icons.chevron_right,
                         size: 33,

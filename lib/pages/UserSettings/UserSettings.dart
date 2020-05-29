@@ -55,7 +55,7 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
 
   LatLng tempLocation;
 
-  final currentActivityStream = ActivityUtils.currentActivityStream;
+  final currentActivityStream = ActivityUtils.getCurrentActivityStream();
   UserActivity currentActivity;
   String subtext;
   Timer refreshTimer;
@@ -249,8 +249,8 @@ class _UserSettingsContentState extends State<_UserSettingsContent> {
                     this.imageProvider =
                         CachedNetworkImageProvider(this.user.imageURL);
                   } else {
-                    this.imageProvider =
-                        AssetImage(Constants().defaultUserAvatarLargeBlueAssetPath);
+                    this.imageProvider = AssetImage(
+                        Constants().defaultUserAvatarLargeBlueAssetPath);
                   }
                 }
                 if (currentActivitySnapshot.data.documents.length == 1) {
