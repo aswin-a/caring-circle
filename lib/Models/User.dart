@@ -4,6 +4,7 @@ import '../constants.dart';
 import './Activities.dart';
 
 class User {
+  String _id;
   String _name;
   String _imageURL;
   List<String> _circles = [];
@@ -11,28 +12,37 @@ class User {
   LocationStatus _locationStatus;
   ActivitiesDuration _activitiesDuration;
 
-  User({Map<String, Object> data}) {
+  User();
+
+  User.fromData(Map<String, Object> data) {
     if (data != null) {
-      this._name = data['name'];
-      this._imageURL = data['imageURL'];
-      for (var circleId in (data['circles'] as List)) {
-        this._circles.add(circleId.toString());
-      }
-
-      final locationStatus = data['locationStatus'];
-      if (locationStatus == LocationStatus.home.toString()) {
-        this._locationStatus = LocationStatus.home;
-      } else if (locationStatus == LocationStatus.office.toString()) {
-        this._locationStatus = LocationStatus.office;
-      } else if (locationStatus == LocationStatus.outside.toString()) {
-        this._locationStatus = LocationStatus.outside;
-      }
-
-      if (data.containsKey('location')) {
-        this._location = UserLocation(data: data['location']);
-      }
+      this.updateData(data);
     }
   }
+
+  updateData(Map<String, Object> data) {
+    this._id = data['id'];
+    this._name = data['name'];
+    this._imageURL = data['imageURL'];
+    for (var circleId in (data['circles'] as List)) {
+      this._circles.add(circleId.toString());
+    }
+
+    final locationStatus = data['locationStatus'];
+    if (locationStatus == LocationStatus.home.toString()) {
+      this._locationStatus = LocationStatus.home;
+    } else if (locationStatus == LocationStatus.office.toString()) {
+      this._locationStatus = LocationStatus.office;
+    } else if (locationStatus == LocationStatus.outside.toString()) {
+      this._locationStatus = LocationStatus.outside;
+    }
+
+    if (data.containsKey('location')) {
+      this._location = UserLocation(data: data['location']);
+    }
+  }
+
+  String get id => this._id;
 
   String get name => this._name;
   set name(String name) => this._name = name;
@@ -49,6 +59,7 @@ class User {
   Map<String, String> get locationStatusData =>
       {'locationStatus': this._locationStatus.toString()};
 
+  // TODO: Add circle data
   Map<String, Object> get userData =>
       {'name': this._name, 'imageURL': this._imageURL};
 

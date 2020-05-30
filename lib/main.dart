@@ -10,6 +10,7 @@ import './pages/Login/OTP.dart';
 import './pages/Login/GetStarted.dart';
 import './pages/Dashboard/Dashboard.dart';
 import './pages/UserSettings/UserSettings.dart';
+import './pages/UserSettings/UserSettingsEdit.dart';
 import './styles/textThemes.dart';
 import './constants.dart';
 import './pages/Permission/Permission.dart';
@@ -74,6 +75,7 @@ class CaringCircle extends StatelessWidget {
         GetStarted.routeName: (ctx) => GetStarted(),
         Dashboard.routeName: (ctx) => Dashboard(),
         UserSettings.routeName: (ctx) => UserSettings(),
+        UserSettingsEdit.routeName: (ctx) => UserSettingsEdit(),
       },
     );
   }

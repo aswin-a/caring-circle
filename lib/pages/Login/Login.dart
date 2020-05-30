@@ -32,9 +32,9 @@ class PhoneNumber extends StatefulWidget {
 
 class _PhoneNumberState extends State<PhoneNumber> {
   @override
-  void initState() {
-    removeHomeGeofence();
-    removeOfficeGeofence();
+  void initState() async {
+    await removeHomeGeofence();
+    await removeOfficeGeofence();
     super.initState();
   }
 
@@ -87,7 +87,9 @@ class _PhoneNumberState extends State<PhoneNumber> {
         'phoneNumber': this.phoneNumber,
         'verificationId': verificationId,
         'forceResendingToken': forceResendingToken
-      });
+      }).then((_) => this.setState(() {
+            this.isLoading = false;
+          }));
     }
 
     FocusScope.of(context).unfocus();

@@ -1,14 +1,13 @@
+import 'package:caring_circle/providers/UserProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
 import '../../components/TitleBar.dart';
 import '../../components/SubtitleBar.dart';
 import '../UserSettings/UserSettings.dart';
 import '../../constants.dart';
-import '../../Models/User.dart';
-import '../../utils/GeofencingUtils.dart';
 import './DashboardChart.dart';
 import './DashboardCirclesList.dart';
 
@@ -29,89 +28,53 @@ class Dashboard extends StatelessWidget {
   }
 }
 
-class _DashboardContent extends StatefulWidget {
-  @override
-  __DashboardContentState createState() => __DashboardContentState();
-}
-
-class __DashboardContentState extends State<_DashboardContent> {
-  final Stream userSnapshotStream = Firestore.instance
-      .collection(Constants().firestoreUsersCollection)
-      .document(Constants().currentUserId)
-      .snapshots();
-
-  User user;
-  bool geofenceInitialised = false;
-
-  @override
-  void initState() {
-    super.initState();
-    initialiseGeofenceManager();
-  }
-
-  void initialiseGeofences() {
-    if (geofenceInitialised) return;
-    checkLocationPermission().then((granted) {
-      if (granted) {
-        if (this.user.location.home != null) {
-          final homeLocation = this.user.location.home;
-          initialiseHomeGeofence(homeLocation.latitude, homeLocation.longitude);
-        }
-        if (this.user.location.office != null) {
-          final officeLocation = this.user.location.office;
-          initialiseOfficeGeofence(
-              officeLocation.latitude, officeLocation.longitude);
-        }
-        this.geofenceInitialised = true;
-      }
-    });
-  }
-
+class _DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-      stream: userSnapshotStream,
-      builder: (context, snapshot) {
-        ImageProvider imageProvider =
-            AssetImage(Constants().defaultUserAvatarBlueAssetPath);
-        if (snapshot.connectionState == ConnectionState.active) {
-          this.user = User(data: snapshot.data.data);
-          if (this.user.imageURL != null) {
-            imageProvider = CachedNetworkImageProvider(this.user.imageURL);
-          }
-          this.initialiseGeofences();
-        }
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            TitleBar(
-              Dashboard.pageTitle,
-              showAvatar: true,
-              avatarImageProvider: imageProvider,
-              avatarOnTapFn: () => Navigator.of(context).pushNamed(
-                  UserSettings.routeName,
-                  arguments: {'fromPage': 'Dashboard'}),
-            ),
-            Expanded(
-              child: ListView(
-                children: <Widget>[
-                  StickyHeader(
-                    header: SubtitleBar('Outdoor Time'),
-                    content: DashboardChart(),
+    return ChangeNotifierProvider<UserProvider>.value(
+      value: UserProvider(Constants().currentUserId),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Consumer<UserProvider>(
+            builder: (context, userProvider, _) {
+              ImageProvider imageProvider = userProvider.user == null
+                  ? AssetImage(Constants().defaultUserAvatarBlueAssetPath)
+                  : CachedNetworkImageProvider(userProvider.user.imageURL);
+              return TitleBar(
+                Dashboard.pageTitle,
+                showAvatar: true,
+                avatarImageProvider: imageProvider,
+                avatarOnTapFn: () => Navigator.of(context).pushNamed(
+                    UserSettings.routeName,
+                    arguments: {'fromPage': 'Dashboard'}),
+              );
+            },
+          ),
+          Expanded(
+            child: ListView(
+              children: <Widget>[
+                StickyHeader(
+                  header: SubtitleBar('Outdoor Time'),
+                  content: DashboardChart(),
+                ),
+                SizedBox(height: 10),
+                StickyHeader(
+                  header: SubtitleBar('Circles', showRightButton: true),
+                  content: Consumer<UserProvider>(
+                    // TODO: Flashing on current activity update
+                    builder: (context, userProvider, _) {
+                      return userProvider.user == null
+                          ? Container()
+                          : DashboardCirclesList(user: userProvider.user);
+                    },
                   ),
-                  SizedBox(height: 10),
-                  StickyHeader(
-                    header: SubtitleBar('Circles', showRightButton: true),
-                    content: this.user != null
-                        ? DashboardCirclesList(user: this.user)
-                        : Container(),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        );
-      },
+          ),
+        ],
+      ),
     );
   }
 }

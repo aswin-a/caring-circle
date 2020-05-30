@@ -12,6 +12,7 @@ import '../../components/LargeAvatar.dart';
 import '../../components/SubtitleBar.dart';
 import '../../components/SettingsBlock.dart';
 import '../../components/MapDialog.dart';
+import '../../components/NameTextField.dart';
 import '../../constants.dart';
 
 class GetStarted extends StatelessWidget {
@@ -100,10 +101,13 @@ class _GetStartedContentState extends State<GetStartedContent> {
     }
 
     FirebaseAuth.instance.currentUser().then((firebaseUser) {
+      final newUserData = user.data;
+      newUserData.addEntries([MapEntry('id', firebaseUser.uid)]);
+
       Firestore.instance
           .collection(Constants().firestoreUsersCollection)
           .document(firebaseUser.uid)
-          .setData(user.data);
+          .setData(newUserData);
     });
 
     Navigator.of(context).pushNamedAndRemoveUntil(
@@ -181,16 +185,20 @@ class _GetStartedContentState extends State<GetStartedContent> {
                             style: Theme.of(context).textTheme.display4),
                         SizedBox(height: 10),
                         Center(
-                          child: LargeAvatar(
-                            editMode: true,
-                            autoFocus: false,
-                            name: this.name,
-                            onNameChanged: this.onNameChanged,
-                            onNameSubmitted: (_) => this.onTapContinue(context),
-                            imageProvider: imageProvider,
+                          child: LargeAvatarEdit(
+                            imageAssetPath:
+                                Constants().defaultUserAvatarLargeBlueAssetPath,
                             onImageUpdated: this.onImageUpdated,
+                            imageFile: (this.imageProvider is FileImage)
+                                ? (this.imageProvider as FileImage).file
+                                : null,
                           ),
                         ),
+                        Center(
+                          child: NameTextField(
+                            onNameChanged: this.onNameChanged,
+                          ),
+                        )
                       ],
                     ),
                   ),

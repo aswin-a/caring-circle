@@ -35,7 +35,7 @@ void callback(List<String> ids, Location l, GeofenceEvent e) async {
       .collection(Constants().firestoreUsersCollection)
       .document(firebaseUser.uid);
 
-  final user = User(data: (await userDocumentReference.get()).data);
+  final user = User.fromData((await userDocumentReference.get()).data);
 
   final activityCollectionReference = userDocumentReference
       .collection(Constants().firestoreUserActivitiesCollection);
@@ -96,7 +96,7 @@ void callback(List<String> ids, Location l, GeofenceEvent e) async {
   }
 }
 
-void initialiseGeofenceManager() async {
+Future<void> initialiseGeofenceManager() async {
   await GeofencingManager.initialize();
 }
 

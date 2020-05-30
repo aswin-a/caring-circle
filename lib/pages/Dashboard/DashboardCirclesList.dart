@@ -8,6 +8,7 @@ import './DashboardCirclesListItem.dart';
 
 class DashboardCirclesList extends StatelessWidget {
   //TODO: Stream builder on user since we need to detect user changes
+  // TODO: Change input to userId from User object
   final User user;
   Future combinedFuture;
 
