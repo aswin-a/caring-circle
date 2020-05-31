@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../components/TodayChart.dart';
 import '../../components/WeekChart.dart';
 import '../../components/MonthChart.dart';
-import '../../providers/UserProvider.dart';
+import '../../providers/UserActivitiesProvider.dart';
 
 class DashboardChart extends StatelessWidget {
   @override
@@ -37,16 +37,16 @@ class DashboardChart extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Expanded(
-                  child: Consumer<UserProvider>(
-                    builder: (context, userProvider, _) {
+                  child: Consumer<UserActivitiesProvider>(
+                    builder: (context, userActivitiesProvider, _) {
                       return TabBarView(
                         children: [
-                          TodayChart(userProvider
-                              ?.user?.activitiesDuration?.todayData),
-                          WeekChart(userProvider
-                              ?.user?.activitiesDuration?.weekData),
-                          MonthChart(userProvider
-                              ?.user?.activitiesDuration?.monthData),
+                          TodayChart(userActivitiesProvider
+                              .activitiesDuration?.todayData),
+                          WeekChart(userActivitiesProvider
+                              .activitiesDuration?.weekData),
+                          MonthChart(userActivitiesProvider
+                              .activitiesDuration?.monthData),
                         ],
                       );
                     },

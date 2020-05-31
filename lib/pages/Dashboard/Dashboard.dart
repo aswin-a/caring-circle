@@ -1,9 +1,10 @@
-import 'package:caring_circle/providers/UserProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
+import '../../providers/UserProvider.dart';
+import '../../providers/UserActivitiesProvider.dart';
 import '../../components/TitleBar.dart';
 import '../../components/SubtitleBar.dart';
 import '../UserSettings/UserSettings.dart';
@@ -31,8 +32,15 @@ class Dashboard extends StatelessWidget {
 class _DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<UserProvider>.value(
-      value: UserProvider(Constants().currentUserId),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserProvider>.value(
+          value: UserProvider(Constants().currentUserId),
+        ),
+        ChangeNotifierProvider<UserActivitiesProvider>.value(
+          value: UserActivitiesProvider(Constants().currentUserId),
+        ),
+      ],
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -61,14 +69,7 @@ class _DashboardContent extends StatelessWidget {
                 SizedBox(height: 10),
                 StickyHeader(
                   header: SubtitleBar('Circles', showRightButton: true),
-                  content: Consumer<UserProvider>(
-                    // TODO: Flashing on current activity update
-                    builder: (context, userProvider, _) {
-                      return userProvider.user == null
-                          ? Container()
-                          : DashboardCirclesList(user: userProvider.user);
-                    },
-                  ),
+                  content: DashboardCirclesList(),
                 ),
               ],
             ),

@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../constants.dart';
-import './Activities.dart';
 
 class User {
   String _id;
   String _name;
   String _imageURL;
-  List<String> _circles = [];
+  List<String> _circles;
   UserLocation _location = UserLocation();
   LocationStatus _locationStatus;
-  ActivitiesDuration _activitiesDuration;
 
   User();
 
@@ -24,6 +22,8 @@ class User {
     this._id = data['id'];
     this._name = data['name'];
     this._imageURL = data['imageURL'];
+
+    this._circles = [];
     for (var circleId in (data['circles'] as List)) {
       this._circles.add(circleId.toString());
     }
@@ -70,10 +70,6 @@ class User {
 
   Map<String, Object> get data =>
       {}..addAll(this.userData)..addAll(this.locationData);
-
-  ActivitiesDuration get activitiesDuration => this._activitiesDuration;
-  set activitiesDuration(ActivitiesDuration activitiesDuration) =>
-      this._activitiesDuration = activitiesDuration;
 }
 
 class UserLocation {

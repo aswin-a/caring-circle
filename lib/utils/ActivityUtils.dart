@@ -108,7 +108,7 @@ List<List<double>> getDurationDataFromOrderedActivities(
         durationRangeLength =
             DateTime(currentDate.year, currentDate.month + 1, 0).day;
         cutoffTime = DateTime(currentDate.year, currentDate.month);
-        result = List.filled(currentDate.day + 1, 10e-5, growable: true);
+        result = List.filled(currentDate.day, 10e-5, growable: true);
         result.addAll(List.filled(durationRangeLength - result.length, 0));
         break;
       default:

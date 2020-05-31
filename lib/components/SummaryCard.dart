@@ -1,39 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-import '../Models/User.dart';
-import '../Models/Circle.dart';
-import '../constants.dart';
 import '../styles/textStyles.dart' as TextStyles;
+import '../Models/Activities.dart';
 
 class SummaryCard extends StatelessWidget {
-  final User user;
-  final Circle circle;
-  final bool forCircle;
+  final String title;
+  final String imageURL;
+  final String imageAssetPath;
+  final ActivitiesDuration activitiesDuration;
   final Function onTap;
 
   SummaryCard({
-    this.user,
-    this.circle,
+    this.title,
+    this.imageURL,
+    this.imageAssetPath,
+    this.activitiesDuration,
     this.onTap,
-    this.forCircle = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final avatarAssetPath = this.forCircle
-        ? Constants().defaultCircleAvatarWhiteAssetPath
-        : Constants().defaultUserAvatarWhiteAssetPath;
-    final title = this.forCircle ? circle.name : user.name;
-    final todayOutdoorTime = this.forCircle
-        ? circle.activitiesDuration.todayOutdoorTime
-        : user.activitiesDuration.todayOutdoorTime;
-    final weekOutdoorTime = this.forCircle
-        ? circle.activitiesDuration.weekOutdoorTime
-        : user.activitiesDuration.weekOutdoorTime;
-    final monthOutdoorTime = this.forCircle
-        ? circle.activitiesDuration.monthOutdoorTime
-        : user.activitiesDuration.monthOutdoorTime;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -62,12 +49,16 @@ class SummaryCard extends StatelessWidget {
                           radius: 18,
                           backgroundColor:
                               Theme.of(context).scaffoldBackgroundColor,
-                          backgroundImage: AssetImage(avatarAssetPath),
+                          backgroundImage: this.imageURL != null
+                              ? CachedNetworkImageProvider(this.imageURL)
+                              : (this.imageAssetPath != null
+                                  ? AssetImage(this.imageAssetPath)
+                                  : null),
                         ),
                       ),
                       SizedBox(width: 10),
                       Text(
-                        title,
+                        this.title,
                         style: TextStyles.circleCardTitleStyle,
                       ),
                     ],
@@ -92,7 +83,7 @@ class SummaryCard extends StatelessWidget {
                       children: <Widget>[
                         Text('Today', style: TextStyles.squareBoxTitleStyle),
                         Center(
-                          child: Text(todayOutdoorTime,
+                          child: Text(this.activitiesDuration?.todayOutdoorTime ?? '',
                               style: TextStyles.squareBoxValueStyle),
                         ),
                       ],
@@ -107,7 +98,7 @@ class SummaryCard extends StatelessWidget {
                       children: <Widget>[
                         Text('Week', style: TextStyles.squareBoxTitleStyle),
                         Center(
-                          child: Text(weekOutdoorTime,
+                          child: Text(this.activitiesDuration?.weekOutdoorTime ?? '',
                               style: TextStyles.squareBoxValueStyle),
                         ),
                       ],
@@ -122,7 +113,7 @@ class SummaryCard extends StatelessWidget {
                       children: <Widget>[
                         Text('Month', style: TextStyles.squareBoxTitleStyle),
                         Center(
-                          child: Text(monthOutdoorTime,
+                          child: Text(this.activitiesDuration?.monthOutdoorTime ?? '',
                               style: TextStyles.squareBoxValueStyle),
                         ),
                       ],

@@ -47,12 +47,14 @@ class MonthChart extends StatelessWidget {
             colors: [Colors.white],
             dotData: FlDotData(show: false),
             spots: List.generate(
-                this
-                    .data
-                    .reduce((value, element) => element > 0 ? value + 1 : value)
-                    .toInt(), (idx) {
-              return FlSpot(idx.toDouble(), this.data[idx]);
-            }),
+              this
+                  .data
+                  .fold(0, (value, element) => element > 0 ? value + 1 : value)
+                  .toInt(),
+              (idx) {
+                return FlSpot(idx.toDouble(), this.data[idx]);
+              },
+            ),
           ),
         ],
       ),

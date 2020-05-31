@@ -1,8 +1,9 @@
-import 'package:caring_circle/providers/UserProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/UserProvider.dart';
+import '../../providers/UserActivitiesProvider.dart';
 import '../../constants.dart';
 import '../../components/TitleBar.dart';
 import '../../components/LargeAvatar.dart';
@@ -30,8 +31,15 @@ class UserSettings extends StatelessWidget {
 class _UserSettingsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<UserProvider>.value(
-      value: UserProvider(Constants().currentUserId),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserProvider>.value(
+          value: UserProvider(Constants().currentUserId),
+        ),
+        ChangeNotifierProvider<UserActivitiesProvider>.value(
+          value: UserActivitiesProvider(Constants().currentUserId),
+        ),
+      ],
       child: Consumer<UserProvider>(
         builder: (context, userProvider, _) {
           return Column(
@@ -64,12 +72,16 @@ class _UserSettingsContent extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              Text(
-                FormattingUtils.getCurrentStatus(
-                  userProvider.user.locationStatus,
-                  userProvider.currentActivityExitTime,
-                ),
-                style: Theme.of(context).textTheme.caption,
+              Consumer<UserActivitiesProvider>(
+                builder: (context, userActivitiesProvider, _) {
+                  return Text(
+                    FormattingUtils.getCurrentStatus(
+                      userProvider.user.locationStatus,
+                      userActivitiesProvider.currentActivityExitTime,
+                    ),
+                    style: Theme.of(context).textTheme.caption,
+                  );
+                },
               ),
               SizedBox(height: 10),
               UserSettingsLocation(),
