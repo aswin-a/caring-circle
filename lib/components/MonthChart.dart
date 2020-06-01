@@ -15,6 +15,10 @@ class MonthChart extends StatelessWidget {
     final maxValue = this.data.reduce(max);
     final unitInHours = maxValue > 60;
     final interval = ((maxValue / 6).floorToDouble() / 60).ceilToDouble() * 60;
+    final nonZeroLength = this
+        .data
+        .fold(0, (value, element) => element > 0 ? value + 1 : value)
+        .toInt();
     return LineChart(
       LineChartData(
         titlesData: FlTitlesData(
@@ -26,6 +30,7 @@ class MonthChart extends StatelessWidget {
             textStyle: TextStyle(color: Colors.white54, fontSize: 10),
             reservedSize: 40,
             interval: unitInHours ? interval : 10,
+            margin: 10,
           ),
           bottomTitles: SideTitles(
             showTitles: true,
@@ -37,7 +42,9 @@ class MonthChart extends StatelessWidget {
         backgroundColor: Colors.transparent,
         borderData: FlBorderData(show: false),
         lineTouchData: LineTouchData(enabled: false),
+        minX: 0,
         maxX: this.data.length.toDouble(),
+        minY: 0,
         maxY:
             unitInHours ? ((maxValue / interval).ceil() + 0.2) * interval : 65,
         gridData: FlGridData(show: false),
@@ -45,12 +52,9 @@ class MonthChart extends StatelessWidget {
           LineChartBarData(
             barWidth: 5,
             colors: [Colors.white],
-            dotData: FlDotData(show: false),
+            dotData: FlDotData(show: nonZeroLength == 1),
             spots: List.generate(
-              this
-                  .data
-                  .fold(0, (value, element) => element > 0 ? value + 1 : value)
-                  .toInt(),
+              nonZeroLength,
               (idx) {
                 return FlSpot(idx.toDouble(), this.data[idx]);
               },

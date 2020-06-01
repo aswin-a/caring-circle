@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:provider/provider.dart';
 
-import '../../components/TodayChart.dart';
-import '../../components/WeekChart.dart';
-import '../../components/MonthChart.dart';
-import '../../providers/UserActivitiesProvider.dart';
+import './TodayChart.dart';
+import './WeekChart.dart';
+import './MonthChart.dart';
+import '../providers/BaseActivitiesProvider.dart';
 
-class DashboardChart extends StatelessWidget {
+class OutdoorTimeChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -37,15 +37,15 @@ class DashboardChart extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Expanded(
-                  child: Consumer<UserActivitiesProvider>(
-                    builder: (context, userActivitiesProvider, _) {
+                  child: Consumer<BaseActivitiesProvider>(
+                    builder: (context, baseActivitiesProvider, _) {
                       return TabBarView(
                         children: [
-                          TodayChart(userActivitiesProvider
+                          TodayChart(baseActivitiesProvider
                               .activitiesDuration?.todayData),
-                          WeekChart(userActivitiesProvider
+                          WeekChart(baseActivitiesProvider
                               .activitiesDuration?.weekData),
-                          MonthChart(userActivitiesProvider
+                          MonthChart(baseActivitiesProvider
                               .activitiesDuration?.monthData),
                         ],
                       );

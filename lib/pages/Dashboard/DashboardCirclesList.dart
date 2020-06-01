@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import './DashboardCirclesListItem.dart';
+import '../Circle/Circle.dart';
+import '../../constants.dart';
+import '../../components/SummaryCard.dart';
 import '../../providers/UserProvider.dart';
 import '../../providers/CircleProvider.dart';
 import '../../providers/CircleActivitiesProvider.dart';
@@ -30,7 +32,31 @@ class DashboardCirclesList extends StatelessWidget {
                             userProvider.user.circles[index]),
                       )
                     ],
-                    child: DashboardCirclesListItem(),
+                    child: Consumer2<CircleProvider, CircleActivitiesProvider>(
+                      builder: (
+                        context,
+                        circleProvider,
+                        circleActivitiesProvider,
+                        _,
+                      ) {
+                        return SummaryCard(
+                          title: circleProvider.circle?.name ?? '',
+                          imageURL: circleProvider.circle?.imageURL,
+                          imageAssetPath:
+                              Constants().defaultCircleAvatarWhiteAssetPath,
+                          activitiesDuration:
+                              circleActivitiesProvider.activitiesDuration,
+                          onTap: circleProvider.circle?.id == null
+                              ? null
+                              : () => Navigator.pushNamed(
+                                      context, Circle.routeName,
+                                      arguments: {
+                                        'fromPage': 'Dashboard',
+                                        'circleId': circleProvider.circle.id,
+                                      }),
+                        );
+                      },
+                    ),
                   );
                 },
               );

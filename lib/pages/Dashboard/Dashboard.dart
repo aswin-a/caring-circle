@@ -3,14 +3,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
-import '../../providers/UserProvider.dart';
-import '../../providers/UserActivitiesProvider.dart';
-import '../../components/TitleBar.dart';
-import '../../components/SubtitleBar.dart';
+import './DashboardCirclesList.dart';
 import '../UserSettings/UserSettings.dart';
 import '../../constants.dart';
-import './DashboardChart.dart';
-import './DashboardCirclesList.dart';
+import '../../components/TitleBar.dart';
+import '../../components/SubtitleBar.dart';
+import '../../components/OutdoorTimeChart.dart';
+import '../../providers/UserProvider.dart';
+import '../../providers/UserActivitiesProvider.dart';
+import '../../providers/BaseActivitiesProvider.dart';
 
 class Dashboard extends StatelessWidget {
   static const routeName = '/dashboard';
@@ -37,7 +38,7 @@ class _DashboardContent extends StatelessWidget {
         ChangeNotifierProvider<UserProvider>.value(
           value: UserProvider(Constants().currentUserId),
         ),
-        ChangeNotifierProvider<UserActivitiesProvider>.value(
+        ChangeNotifierProvider<BaseActivitiesProvider>.value(
           value: UserActivitiesProvider(Constants().currentUserId),
         ),
       ],
@@ -46,7 +47,7 @@ class _DashboardContent extends StatelessWidget {
         children: <Widget>[
           Consumer<UserProvider>(
             builder: (context, userProvider, _) {
-              ImageProvider imageProvider = userProvider.user == null
+              ImageProvider imageProvider = userProvider.user?.imageURL == null
                   ? AssetImage(Constants().defaultUserAvatarBlueAssetPath)
                   : CachedNetworkImageProvider(userProvider.user.imageURL);
               return TitleBar(
@@ -64,7 +65,7 @@ class _DashboardContent extends StatelessWidget {
               children: <Widget>[
                 StickyHeader(
                   header: SubtitleBar('Outdoor Time'),
-                  content: DashboardChart(),
+                  content: OutdoorTimeChart(),
                 ),
                 SizedBox(height: 10),
                 StickyHeader(

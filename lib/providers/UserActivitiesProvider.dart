@@ -8,12 +8,16 @@ import '../Models/User.dart';
 import '../Models/Activities.dart';
 import '../constants.dart';
 import '../utils/ActivityUtils.dart' as ActivityUtils;
+import './BaseActivitiesProvider.dart';
 
-class UserActivitiesProvider extends ChangeNotifier {
-  static final Map<String, UserActivitiesProvider> _cache = Map<String, UserActivitiesProvider>();
+class UserActivitiesProvider extends ChangeNotifier
+    implements BaseActivitiesProvider {
+  static final Map<String, UserActivitiesProvider> _cache =
+      Map<String, UserActivitiesProvider>();
 
   factory UserActivitiesProvider(String userId) {
-    return _cache.putIfAbsent(userId, () => UserActivitiesProvider._internal(userId));
+    return _cache.putIfAbsent(
+        userId, () => UserActivitiesProvider._internal(userId));
   }
 
   ActivitiesDuration _activitiesDuration;

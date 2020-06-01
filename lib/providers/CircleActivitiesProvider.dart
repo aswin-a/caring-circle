@@ -7,8 +7,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../Models/Activities.dart';
 import './CircleProvider.dart';
 import './UserActivitiesProvider.dart';
+import './BaseActivitiesProvider.dart';
 
-class CircleActivitiesProvider extends ChangeNotifier {
+class CircleActivitiesProvider extends ChangeNotifier implements BaseActivitiesProvider {
   static final Map<String, CircleActivitiesProvider> _cache =
       Map<String, CircleActivitiesProvider>();
 
