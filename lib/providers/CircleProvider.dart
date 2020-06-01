@@ -60,6 +60,18 @@ class CircleProvider extends ChangeNotifier {
     await this.uploadData(onlyUsersData: true);
   }
 
+  Future<void> addUser(Map data) async {
+    this._circle.users.add(CircleUser(data: data));
+    await this.uploadData(onlyUsersData: true);
+  }
+
+  Future<void> deleteCircle() async {
+    await Firestore.instance
+        .collection(Constants().firestoreCirclesCollection)
+        .document(this._circle.id)
+        .delete();
+  }
+
   destruct() {
     _streamSubscription.cancel();
   }

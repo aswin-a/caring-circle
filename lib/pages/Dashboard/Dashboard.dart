@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
 import './DashboardCirclesList.dart';
+import '../CreateCircle/CreateCircle.dart';
 import '../UserSettings/UserSettings.dart';
 import '../../constants.dart';
 import '../../components/TitleBar.dart';
@@ -69,7 +70,12 @@ class _DashboardContent extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 StickyHeader(
-                  header: SubtitleBar('Circles', showRightButton: true),
+                  header: SubtitleBar(
+                    'Circles',
+                    showRightButton: true,
+                    onTap: () =>
+                        Navigator.of(context).pushNamed(CreateCircle.routeName),
+                  ),
                   content: DashboardCirclesList(),
                 ),
               ],

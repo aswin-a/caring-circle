@@ -110,7 +110,7 @@ class _CircleSettingsEditContentState
                   onImageUpdated: onImageUpdated,
                 ),
                 NameTextField(
-                  initialValue: circleProvider.circle.name,
+                  initialValue: circleProvider.circle?.name ?? '',
                   onNameChanged: this.onNameChanged,
                 ),
               ],

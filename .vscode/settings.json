@@ -9,6 +9,7 @@
         "fullscreen",
         "geofencing",
         "geolocator",
+        "precache",
         "rflutter",
         "timeago"
     ]

@@ -60,6 +60,11 @@ class UserProvider extends ChangeNotifier {
     this.user.circles.removeWhere((id) => id == circleId);
     await this.uploadData(onlyCirclesData: true);
   }
+  
+  Future<void> addCircle(String circleId) async {
+    this.user.circles.add(circleId);
+    await this.uploadData(onlyCirclesData: true);
+  }
 
   destruct() {
     _streamSubscription.cancel();

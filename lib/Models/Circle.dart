@@ -37,7 +37,7 @@ class Circle {
       {'name': this._name, 'imageURL': this._imageURL};
 
   Map<String, List<Map<String, Object>>> get usersData =>
-      {'users': this._users.map((e) => e.data).toList()};
+      {'users': this._users?.map((e) => e.data)?.toList() ?? []};
 
   Map<String, Object> get data =>
       {}..addAll(this.circleData)..addAll(this.usersData);
