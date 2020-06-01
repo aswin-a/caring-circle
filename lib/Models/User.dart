@@ -59,17 +59,22 @@ class User {
   Map<String, String> get locationStatusData =>
       {'locationStatus': this._locationStatus.toString()};
 
-  // TODO: Add circle data
-  Map<String, Object> get userData =>
-      {'name': this._name, 'imageURL': this._imageURL};
+  Map<String, Object> get userData => {
+        'name': this._name,
+        'imageURL': this._imageURL,
+      };
+
+  Map<String, Object> get circlesData => {'circles': this._circles};
 
   UserLocation get location => this._location;
 
   Map<String, Map<String, GeoPoint>> get locationData =>
       {'location': this._location.data};
 
-  Map<String, Object> get data =>
-      {}..addAll(this.userData)..addAll(this.locationData);
+  Map<String, Object> get data => {}
+    ..addAll(this.userData)
+    ..addAll(this.circlesData)
+    ..addAll(this.locationData);
 }
 
 class UserLocation {

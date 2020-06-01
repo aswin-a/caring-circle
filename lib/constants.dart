@@ -19,6 +19,7 @@ class Constants {
   String firestoreCirclesCollection = 'circles';
 
   String firebaseStorageUserImagesPath = 'userImages';
+  String firebaseStorageCircleImagesPath = 'circleImages';
 
   String defaultUserAvatarBlueAssetPath = 'assets/images/defaultUserAvatarBlue.png';
   String defaultUserAvatarWhiteAssetPath = 'assets/images/defaultUserAvatarWhite.png';

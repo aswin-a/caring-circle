@@ -35,26 +35,30 @@ class CircleProvider extends ChangeNotifier {
     );
   }
 
-  // TODO: Update this functionality
-  // Future<void> uploadData({
-  //   onlyUserData: false,
-  //   onlyLocationData: false,
-  // }) async {
-  //   Map _uploadData;
+  Future<void> uploadData({
+    onlyCircleData: false,
+    onlyUsersData: false,
+  }) async {
+    Map _uploadData;
 
-  //   if (onlyUserData) {
-  //     _uploadData = this._user.userData;
-  //   } else if (onlyLocationData) {
-  //     _uploadData = this._user.locationData;
-  //   } else {
-  //     _uploadData = this._user.data;
-  //   }
+    if (onlyCircleData) {
+      _uploadData = this._circle.circleData;
+    } else if (onlyUsersData) {
+      _uploadData = this._circle.usersData;
+    } else {
+      _uploadData = this._circle.data;
+    }
 
-  //   await Firestore.instance
-  //       .collection(Constants().firestoreUsersCollection)
-  //       .document(this._user.id)
-  //       .updateData(_uploadData);
-  // }
+    await Firestore.instance
+        .collection(Constants().firestoreCirclesCollection)
+        .document(this._circle.id)
+        .updateData(_uploadData);
+  }
+
+  Future<void> removeUser(String userId) async {
+    this._circle.users.removeWhere((circleUser) => circleUser.id == userId);
+    await this.uploadData(onlyUsersData: true);
+  }
 
   destruct() {
     _streamSubscription.cancel();

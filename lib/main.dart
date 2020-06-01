@@ -15,6 +15,8 @@ import './styles/textThemes.dart';
 import './constants.dart';
 import './pages/Permission/Permission.dart';
 import './pages/Circle/Circle.dart';
+import './pages/CircleSettings/CircleSettings.dart';
+import './pages/CircleSettings/CircleSettingsEdit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,6 +80,8 @@ class CaringCircle extends StatelessWidget {
         UserSettings.routeName: (ctx) => UserSettings(),
         UserSettingsEdit.routeName: (ctx) => UserSettingsEdit(),
         Circle.routeName: (ctx) => Circle(),
+        CircleSettings.routeName: (ctx) => CircleSettings(),
+        CircleSettingsEdit.routeName: (ctx) => CircleSettingsEdit(),
       },
     );
   }

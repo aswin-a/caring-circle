@@ -35,13 +35,15 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> uploadData({
     onlyUserData: false,
+    onlyCirclesData: false,
     onlyLocationData: false,
   }) async {
-    // TODO: Add circle data
     Map _uploadData;
 
     if (onlyUserData) {
       _uploadData = this._user.userData;
+    } else if (onlyCirclesData) {
+      _uploadData = this._user.circlesData;
     } else if (onlyLocationData) {
       _uploadData = this._user.locationData;
     } else {
@@ -52,6 +54,11 @@ class UserProvider extends ChangeNotifier {
         .collection(Constants().firestoreUsersCollection)
         .document(this._user.id)
         .updateData(_uploadData);
+  }
+
+  Future<void> removeCircle(String circleId) async {
+    this.user.circles.removeWhere((id) => id == circleId);
+    await this.uploadData(onlyCirclesData: true);
   }
 
   destruct() {

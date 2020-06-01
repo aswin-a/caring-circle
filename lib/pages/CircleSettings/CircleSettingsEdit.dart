@@ -6,40 +6,41 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
-import './UserSettings.dart';
+import './CircleSettings.dart';
 import '../../constants.dart';
 import '../../components/TitleBar.dart';
 import '../../components/LargeAvatar.dart';
 import '../../components/NameTextField.dart';
-import '../../providers/UserProvider.dart';
+import '../../providers/CircleProvider.dart';
 
-class UserSettingsEdit extends StatelessWidget {
-  static const routeName = '/user-settings-edit';
-  static const pageTitle = 'Edit User Settings';
+class CircleSettingsEdit extends StatelessWidget {
+  static const routeName = '/circle-settings-edit';
+  static const pageTitle = 'Edit Circle Settings';
 
   Widget build(BuildContext context) {
     return Material(
       type: MaterialType.canvas,
       color: Theme.of(context).scaffoldBackgroundColor,
       child: SafeArea(
-        child: _UserSettingsEditContent(),
+        child: _CircleSettingsEditContent(),
       ),
     );
   }
 }
 
-class _UserSettingsEditContent extends StatefulWidget {
+class _CircleSettingsEditContent extends StatefulWidget {
   @override
-  __UserSettingsEditContentState createState() =>
-      __UserSettingsEditContentState();
+  _CircleSettingsEditContentState createState() =>
+      _CircleSettingsEditContentState();
 }
 
-class __UserSettingsEditContentState extends State<_UserSettingsEditContent> {
+class _CircleSettingsEditContentState
+    extends State<_CircleSettingsEditContent> {
   String name;
   File uploadedImageFile;
   bool isLoading = false;
 
-  void onSave(BuildContext context, UserProvider userProvider) async {
+  void onSave(BuildContext context, CircleProvider circleProvider) async {
     if (name != null && name.length == 0) return;
 
     setState(() {
@@ -47,22 +48,22 @@ class __UserSettingsEditContentState extends State<_UserSettingsEditContent> {
     });
 
     if (name != null) {
-      userProvider.user.name = name;
+      circleProvider.circle.name = name;
     }
 
     if (uploadedImageFile != null) {
-      userProvider.user.imageURL = await (await FirebaseStorage.instance
+      circleProvider.circle.imageURL = await (await FirebaseStorage.instance
               .ref()
               .child(
-                  '${Constants().firebaseStorageUserImagesPath}/${userProvider.user.id}')
+                  '${Constants().firebaseStorageCircleImagesPath}/${circleProvider.circle.id}')
               .putFile(uploadedImageFile)
               .onComplete)
           .ref
           .getDownloadURL();
       await precacheImage(
-          CachedNetworkImageProvider(userProvider.user.imageURL), context);
+          CachedNetworkImageProvider(circleProvider.circle.imageURL), context);
     }
-    await userProvider.uploadData(onlyUserData: true);
+    await circleProvider.uploadData(onlyCircleData: true);
 
     setState(() {
       this.isLoading = false;
@@ -81,10 +82,12 @@ class __UserSettingsEditContentState extends State<_UserSettingsEditContent> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<UserProvider>.value(
-      value: UserProvider(Constants().currentUserId),
-      child: Consumer<UserProvider>(
-        builder: (context, userProvider, _) {
+    final routeArguments = ModalRoute.of(context).settings.arguments as Map;
+    final circleId = routeArguments['circleId'];
+    return ChangeNotifierProvider<CircleProvider>.value(
+      value: CircleProvider(circleId),
+      child: Consumer<CircleProvider>(
+        builder: (context, circleProvider, _) {
           return LoadingOverlay(
             isLoading: this.isLoading,
             color: Theme.of(context).scaffoldBackgroundColor,
@@ -92,22 +95,22 @@ class __UserSettingsEditContentState extends State<_UserSettingsEditContent> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 TitleBar(
-                  UserSettings.pageTitle,
+                  CircleSettings.pageTitle,
                   showLeftButton: true,
                   leftButtonTitle: 'Cancel',
                   leftButtonOnTapFn: () => Navigator.of(context).pop(),
                   showRightButton: true,
                   rightButtonTitle: 'Save',
-                  rightButtonOnTapFn: () => onSave(context, userProvider),
+                  rightButtonOnTapFn: () => onSave(context, circleProvider),
                 ),
                 LargeAvatarEdit(
-                  imageURL: userProvider.user?.imageURL,
+                  imageURL: circleProvider.circle?.imageURL,
                   imageAssetPath:
-                      Constants().defaultUserAvatarLargeBlueAssetPath,
+                      Constants().defaultCircleAvatarLargeBlueAssetPath,
                   onImageUpdated: onImageUpdated,
                 ),
                 NameTextField(
-                  initialValue: userProvider.user.name,
+                  initialValue: circleProvider.circle.name,
                   onNameChanged: this.onNameChanged,
                 ),
               ],

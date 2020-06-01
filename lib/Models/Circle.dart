@@ -18,8 +18,8 @@ class Circle {
     this._imageURL = data['imageURL'];
 
     this._users = [];
-    for (var circleUser in (data['users'] as List)) {
-      this._users.add(CircleUser(circleUser['id'], circleUser['admin']));
+    for (var circleUserData in (data['users'] as List)) {
+      this._users.add(CircleUser(data: (circleUserData)));
     }
   }
 
@@ -33,15 +33,29 @@ class Circle {
 
   List<CircleUser> get users => this._users;
 
-  // TODO: Add getting data functionality
+  Map<String, Object> get circleData =>
+      {'name': this._name, 'imageURL': this._imageURL};
+
+  Map<String, List<Map<String, Object>>> get usersData =>
+      {'users': this._users.map((e) => e.data).toList()};
+
+  Map<String, Object> get data =>
+      {}..addAll(this.circleData)..addAll(this.usersData);
 }
 
 class CircleUser {
   String _id;
-  bool _isAdmin;
+  bool _isAdmin = false;
 
-  CircleUser(this._id, [this._isAdmin = false]);
+  CircleUser({Map data}) {
+    if (data != null) {
+      this._id = data['id'];
+      this._isAdmin = data['admin'];
+    }
+  }
 
   String get id => this._id;
   bool get isAdmin => this._isAdmin;
+
+  Map<String, Object> get data => {'id': this._id, 'admin': this.isAdmin};
 }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
 import './CricleUsersList.dart';
+import '../CircleSettings/CircleSettings.dart';
 import '../../constants.dart';
 import '../../components/TitleBar.dart';
 import '../../components/SubtitleBar.dart';
@@ -48,7 +49,8 @@ class _CircleContent extends StatelessWidget {
         children: <Widget>[
           Consumer<CircleProvider>(
             builder: (context, circleProvider, _) {
-              ImageProvider imageProvider = circleProvider.circle?.imageURL == null
+              ImageProvider imageProvider = circleProvider.circle?.imageURL ==
+                      null
                   ? AssetImage(Constants().defaultCircleAvatarBlueAssetPath)
                   : CachedNetworkImageProvider(circleProvider.circle.imageURL);
               return TitleBar(
@@ -59,10 +61,13 @@ class _CircleContent extends StatelessWidget {
                 showLeftChevron: true,
                 leftButtonTitle: routeArguments['fromPage'],
                 leftButtonOnTapFn: () => Navigator.of(context).pop(),
-                // TODO: Circle Settings
-                // avatarOnTapFn: () => Navigator.of(context).pushNamed(
-                //     UserSettings.routeName,
-                //     arguments: {'fromPage': 'Dashboard'}),
+                avatarOnTapFn: () => Navigator.of(context).pushNamed(
+                  CircleSettings.routeName,
+                  arguments: {
+                    'fromPage': 'Circle',
+                    'circleId': circleId,
+                  },
+                ),
               );
             },
           ),
