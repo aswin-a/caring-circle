@@ -4,11 +4,14 @@ class CCFlatButton extends StatelessWidget {
   final String text;
   final Function onPressed;
   final bool showBackIcon;
+  final bool darkTextColor;
 
-  CCFlatButton(
-      {this.text = 'Button',
-      @required this.onPressed,
-      this.showBackIcon = false});
+  CCFlatButton({
+    this.text = 'Button',
+    @required this.onPressed,
+    this.showBackIcon = false,
+    this.darkTextColor = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,7 @@ class CCFlatButton extends StatelessWidget {
                   ? Icon(
                       Icons.chevron_left,
                       size: 35,
-                      color: Colors.white,
+                      color: this.darkTextColor ? Colors.black54 : Colors.white,
                     )
                   : Container(),
             ),
@@ -34,7 +37,10 @@ class CCFlatButton extends StatelessWidget {
               padding: EdgeInsets.only(left: this.showBackIcon ? 20 : 0),
               child: Text(
                 this.text,
-                style: Theme.of(context).textTheme.display1,
+                style: this.darkTextColor
+                    ? Theme.of(context).textTheme.display1.copyWith(
+                        color: Colors.black54, fontWeight: FontWeight.w500)
+                    : Theme.of(context).textTheme.display1,
               ),
             ),
           ],

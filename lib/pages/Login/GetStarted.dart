@@ -102,7 +102,10 @@ class _GetStartedContentState extends State<GetStartedContent> {
 
     FirebaseAuth.instance.currentUser().then((firebaseUser) {
       final newUserData = user.data;
-      newUserData.addEntries([MapEntry('id', firebaseUser.uid)]);
+      newUserData.addEntries([
+        MapEntry('id', firebaseUser.uid),
+        MapEntry('phone', firebaseUser.phoneNumber),
+      ]);
 
       Firestore.instance
           .collection(Constants().firestoreUsersCollection)

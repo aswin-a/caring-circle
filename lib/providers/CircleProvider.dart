@@ -38,6 +38,7 @@ class CircleProvider extends ChangeNotifier {
   Future<void> uploadData({
     onlyCircleData: false,
     onlyUsersData: false,
+    onlyUnAuthUsersData: false,
   }) async {
     Map _uploadData;
 
@@ -45,6 +46,8 @@ class CircleProvider extends ChangeNotifier {
       _uploadData = this._circle.circleData;
     } else if (onlyUsersData) {
       _uploadData = this._circle.usersData;
+    } else if (onlyUnAuthUsersData) {
+      _uploadData = this._circle.unAuthUsersData;
     } else {
       _uploadData = this._circle.data;
     }
@@ -60,8 +63,8 @@ class CircleProvider extends ChangeNotifier {
     await this.uploadData(onlyUsersData: true);
   }
 
-  Future<void> addUser(Map data) async {
-    this._circle.users.add(CircleUser(data: data));
+  Future<void> addUser(CircleUser circleUser) async {
+    this._circle.users.add(circleUser);
     await this.uploadData(onlyUsersData: true);
   }
 
@@ -70,6 +73,19 @@ class CircleProvider extends ChangeNotifier {
         .collection(Constants().firestoreCirclesCollection)
         .document(this._circle.id)
         .delete();
+  }
+
+  Future<void> removeUnAuthUser(String phoneNumber) async {
+    this
+        ._circle
+        .unAuthUsers
+        .removeWhere((unAuthUser) => unAuthUser.phone == phoneNumber);
+    await this.uploadData(onlyUnAuthUsersData: true);
+  }
+
+  Future<void> addUnAuthUser(CircleUnAuthUser circleUnAuthUser) async {
+    this._circle.unAuthUsers.add(circleUnAuthUser);
+    await this.uploadData(onlyUnAuthUsersData: true);
   }
 
   destruct() {

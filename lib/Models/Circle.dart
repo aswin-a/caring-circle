@@ -3,6 +3,7 @@ class Circle {
   String _name;
   String _imageURL;
   List<CircleUser> _users;
+  List<CircleUnAuthUser> _unAuthUsers;
 
   Circle();
 
@@ -22,6 +23,11 @@ class Circle {
       for (var circleUserData in (data['users'] as List)) {
         this._users.add(CircleUser(data: (circleUserData)));
       }
+
+      this._unAuthUsers = [];
+      for (var unAuthUser in (data['unAuthenticatedUsers'] as List)) {
+        this._unAuthUsers.add(CircleUnAuthUser(data: unAuthUser));
+      }
     }
   }
 
@@ -34,6 +40,8 @@ class Circle {
   set imageURL(String imageURL) => this._imageURL = imageURL;
 
   List<CircleUser> get users => this._users;
+  
+  List<CircleUnAuthUser> get unAuthUsers => this._unAuthUsers;
 
   Map<String, Object> get circleData =>
       {'name': this._name, 'imageURL': this._imageURL};
@@ -41,8 +49,15 @@ class Circle {
   Map<String, List<Map<String, Object>>> get usersData =>
       {'users': this._users?.map((e) => e.data)?.toList() ?? []};
 
-  Map<String, Object> get data =>
-      {}..addAll(this.circleData)..addAll(this.usersData);
+  Map<String, List<Map<String, Object>>> get unAuthUsersData => {
+        'unAuthenticatedUsers':
+            this._unAuthUsers?.map((e) => e.data)?.toList() ?? []
+      };
+
+  Map<String, Object> get data => {}
+    ..addAll(this.circleData)
+    ..addAll(this.usersData)
+    ..addAll(this.unAuthUsersData);
 }
 
 class CircleUser {
@@ -60,4 +75,21 @@ class CircleUser {
   bool get isAdmin => this._isAdmin;
 
   Map<String, Object> get data => {'id': this._id, 'admin': this.isAdmin};
+}
+
+class CircleUnAuthUser {
+  String _phone = '';
+  String _name = '';
+
+  CircleUnAuthUser({Map data}) {
+    if (data != null) {
+      this._phone = data['phone'];
+      this._name = data['name'];
+    }
+  }
+
+  String get phone => this._phone;
+  String get name => this._name;
+
+  Map<String, Object> get data => {'phone': this._phone, 'name': this._name};
 }

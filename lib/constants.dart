@@ -12,11 +12,16 @@ class Constants {
   set currentUserId (String uid) => this._currentUserId = uid;
 
   String firestoreUsersCollection = 'users';
+  String firestoreUserPhoneField = 'phone';
   String firestoreUserActivitiesCollection = 'activities';
   String firestoreUserActivitiesExitField = 'exit';
   String firestoreUserActivitiesEntryField = 'entry';
 
   String firestoreCirclesCollection = 'circles';
+  
+  String firestoreUnAuthenticatedUsersCollection = 'unAuthenticatedUsers';
+  String firestoreUnAuthenticatedUserPhoneField = 'phone';
+  String firestoreUnAuthenticatedUserCriclesField = 'circles';
 
   String firebaseStorageUserImagesPath = 'userImages';
   String firebaseStorageCircleImagesPath = 'circleImages';

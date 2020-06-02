@@ -1,8 +1,16 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sticky_headers/sticky_headers.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:international_phone_input/international_phone_input.dart';
 
 import './CircleSettingsEdit.dart';
+import './CircleSettingsUsersList.dart';
 import '../../constants.dart';
+import '../../components/SubtitleBar.dart';
 import '../../components/TitleBar.dart';
 import '../../components/LargeAvatar.dart';
 import '../../Models/Circle.dart';
@@ -43,6 +51,63 @@ class _CircleSettingsContent extends StatelessWidget {
         .pushNamedAndRemoveUntil(Dashboard.routeName, (_) => false);
   }
 
+  Future<void> addUser(CircleProvider circleProvider) async {
+    final PhoneContact contact = await FlutterContactPicker.pickPhoneContact();
+    final phoneNumber = await PhoneService.getNormalizedPhoneNumber(
+        contact.phoneNumber.number, 'IN');
+    final List<DocumentSnapshot> userDocumentSnapshotList = (await Firestore
+            .instance
+            .collection(Constants().firestoreUsersCollection)
+            .where(Constants().firestoreUserPhoneField, isEqualTo: phoneNumber)
+            .getDocuments())
+        .documents;
+
+    if (userDocumentSnapshotList.length == 1) {
+      final userId = userDocumentSnapshotList.first.data['id'];
+      final userProvider = UserProvider(userId);
+      Timer.periodic(Duration(milliseconds: 50), (t) {
+        if (userProvider.user != null) {
+          t.cancel();
+          userProvider.addCircle(circleProvider.circle.id);
+        }
+      });
+      circleProvider.addUser(CircleUser(data: {'id': userId, 'admin': false}));
+    } else {
+      final List<DocumentSnapshot> unAuthUserDocumentSnapshotList =
+          (await Firestore.instance
+                  .collection(
+                      Constants().firestoreUnAuthenticatedUsersCollection)
+                  .where(Constants().firestoreUnAuthenticatedUserPhoneField,
+                      isEqualTo: phoneNumber)
+                  .getDocuments())
+              .documents;
+
+      if (unAuthUserDocumentSnapshotList.length == 1) {
+        final unAuthUserCirclesList = unAuthUserDocumentSnapshotList.first
+            .data[Constants().firestoreUnAuthenticatedUserCriclesField] as List;
+        final List<String> unAuthUserUpdatedCirclesList = [];
+        unAuthUserCirclesList
+            .forEach((circleId) => unAuthUserUpdatedCirclesList.add(circleId));
+        unAuthUserUpdatedCirclesList.add(circleProvider.circle.id);
+        unAuthUserDocumentSnapshotList.first.reference.updateData({
+          Constants().firestoreUnAuthenticatedUserCriclesField:
+              unAuthUserUpdatedCirclesList
+        });
+      } else {
+        await Firestore.instance
+            .collection(Constants().firestoreUnAuthenticatedUsersCollection)
+            .add({
+          Constants().firestoreUnAuthenticatedUserPhoneField: phoneNumber,
+          Constants().firestoreUnAuthenticatedUserCriclesField: [
+            circleProvider.circle.id
+          ],
+        });
+      }
+      circleProvider.addUnAuthUser(CircleUnAuthUser(
+          data: {'phone': phoneNumber, 'name': contact.fullName}));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final routeArguments = ModalRoute.of(context).settings.arguments as Map;
@@ -72,37 +137,52 @@ class _CircleSettingsContent extends StatelessWidget {
                   arguments: {'circleId': circleProvider.circle.id},
                 ),
               ),
-              Center(
-                child: LargeAvatar(
-                  imageURL: circleProvider.circle?.imageURL,
-                  imageAssetPath:
-                      Constants().defaultCircleAvatarLargeBlueAssetPath,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  circleProvider.circle.name,
-                  style: Theme.of(context).textTheme.display3,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              SizedBox(height: 10),
               Expanded(
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: FlatButton(
-                    onPressed: isAdmin
-                        ? () => deleteCircle(context, circleProvider)
-                        : () => leaveCircle(context, circleProvider),
-                    child: Text(
-                      isAdmin ? 'Delete Circle' : 'Leave Circle',
-                      style: Theme.of(context).textTheme.button,
+                child: ListView(
+                  children: <Widget>[
+                    Center(
+                      child: LargeAvatar(
+                        imageURL: circleProvider.circle?.imageURL,
+                        imageAssetPath:
+                            Constants().defaultCircleAvatarLargeBlueAssetPath,
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        circleProvider.circle.name,
+                        style: Theme.of(context).textTheme.display3,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    isAdmin
+                        ? StickyHeader(
+                            header: SubtitleBar(
+                              'People',
+                              showRightButton: true,
+                              onTap: () => addUser(circleProvider),
+                            ),
+                            content: CircleSettingsUsersList(),
+                          )
+                        : Container(),
+                    // TODO: Push to bottom of screen
+                    Container(
+                      alignment: Alignment.bottomCenter,
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: FlatButton(
+                        onPressed: isAdmin
+                            ? () => deleteCircle(context, circleProvider)
+                            : () => leaveCircle(context, circleProvider),
+                        child: Text(
+                          isAdmin ? 'Delete Circle' : 'Leave Circle',
+                          style: Theme.of(context).textTheme.button,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              )
+              ),
             ],
           );
         },

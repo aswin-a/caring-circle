@@ -4,6 +4,7 @@ import '../constants.dart';
 
 class User {
   String _id;
+  String _phone;
   String _name;
   String _imageURL;
   List<String> _circles;
@@ -20,6 +21,7 @@ class User {
 
   updateData(Map<String, Object> data) {
     this._id = data['id'];
+    this._phone = data['phone'];
     this._name = data['name'];
     this._imageURL = data['imageURL'];
 
@@ -43,6 +45,8 @@ class User {
   }
 
   String get id => this._id;
+  
+  String get phoneNumber => this._phone;
 
   String get name => this._name;
   set name(String name) => this._name = name;
