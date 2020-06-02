@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import './CircleSettingsEdit.dart';
-import '../../pages/Dashboard/Dashboard.dart';
-import '../../providers/CircleActivitiesProvider.dart';
-import '../../providers/CircleProvider.dart';
-import '../../providers/UserProvider.dart';
 import '../../constants.dart';
 import '../../components/TitleBar.dart';
 import '../../components/LargeAvatar.dart';
+import '../../Models/Circle.dart';
+import '../../pages/Dashboard/Dashboard.dart';
+import '../../providers/CircleProvider.dart';
+import '../../providers/UserProvider.dart';
 
 class CircleSettings extends StatelessWidget {
   static const routeName = '/circle-settings';
@@ -26,21 +26,36 @@ class CircleSettings extends StatelessWidget {
 }
 
 class _CircleSettingsContent extends StatelessWidget {
+  void leaveCircle(BuildContext context, CircleProvider circleProvider) {
+    UserProvider(Constants().currentUserId)
+        .removeCircle(circleProvider.circle.id);
+    circleProvider.removeUser(Constants().currentUserId);
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(Dashboard.routeName, (_) => false);
+  }
+
+  void deleteCircle(BuildContext context, CircleProvider circleProvider) {
+    circleProvider.circle.users.forEach((circleUser) {
+      UserProvider(circleUser.id).removeCircle(circleProvider.circle.id);
+    });
+    circleProvider.deleteCircle();
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(Dashboard.routeName, (_) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final routeArguments = ModalRoute.of(context).settings.arguments as Map;
     final circleId = routeArguments['circleId'];
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<CircleProvider>.value(
-          value: CircleProvider(circleId),
-        ),
-        ChangeNotifierProvider<CircleActivitiesProvider>.value(
-          value: CircleActivitiesProvider(circleId),
-        ),
-      ],
+    return ChangeNotifierProvider<CircleProvider>.value(
+      value: CircleProvider(circleId),
       child: Consumer<CircleProvider>(
         builder: (context, circleProvider, _) {
+          final bool isAdmin = circleProvider.circle.users
+              .singleWhere(
+                  (circleUser) => circleUser.id == Constants().currentUserId,
+                  orElse: () => CircleUser())
+              .isAdmin;
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -77,15 +92,12 @@ class _CircleSettingsContent extends StatelessWidget {
                 child: Container(
                   alignment: Alignment.bottomCenter,
                   padding: EdgeInsets.only(bottom: 20),
-                  // TODO: Add delete circle for admin
                   child: FlatButton(
-                    onPressed: () {
-                      circleProvider.removeUser(Constants().currentUserId);
-                      UserProvider(Constants().currentUserId).removeCircle(circleProvider.circle.id);
-                      Navigator.of(context).pushNamedAndRemoveUntil(Dashboard.routeName, (_) => false);
-                    },
+                    onPressed: isAdmin
+                        ? () => deleteCircle(context, circleProvider)
+                        : () => leaveCircle(context, circleProvider),
                     child: Text(
-                      'Leave Circle',
+                      isAdmin ? 'Delete Circle' : 'Leave Circle',
                       style: Theme.of(context).textTheme.button,
                     ),
                   ),

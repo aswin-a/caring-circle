@@ -13,13 +13,15 @@ class Circle {
   }
 
   updateData(Map<String, Object> data) {
-    this._id = data['id'];
-    this._name = data['name'];
-    this._imageURL = data['imageURL'];
+    if (data != null) {
+      this._id = data['id'];
+      this._name = data['name'];
+      this._imageURL = data['imageURL'];
 
-    this._users = [];
-    for (var circleUserData in (data['users'] as List)) {
-      this._users.add(CircleUser(data: (circleUserData)));
+      this._users = [];
+      for (var circleUserData in (data['users'] as List)) {
+        this._users.add(CircleUser(data: (circleUserData)));
+      }
     }
   }
 
@@ -44,7 +46,7 @@ class Circle {
 }
 
 class CircleUser {
-  String _id;
+  String _id = '';
   bool _isAdmin = false;
 
   CircleUser({Map data}) {

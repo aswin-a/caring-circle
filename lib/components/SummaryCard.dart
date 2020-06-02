@@ -10,6 +10,7 @@ class SummaryCard extends StatelessWidget {
   final String imageAssetPath;
   final ActivitiesDuration activitiesDuration;
   final Function onTap;
+  final String rightTextData;
 
   SummaryCard({
     this.title,
@@ -17,6 +18,7 @@ class SummaryCard extends StatelessWidget {
     this.imageAssetPath,
     this.activitiesDuration,
     this.onTap,
+    this.rightTextData,
   });
 
   @override
@@ -63,12 +65,26 @@ class SummaryCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  this.onTap != null
-                      ? Icon(
-                          Icons.chevron_right,
-                          size: 33,
-                        )
-                      : Container(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      this.rightTextData != null
+                          ? Text(
+                              this.rightTextData,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .caption
+                                  .copyWith(color: Colors.black54),
+                            )
+                          : Container(),
+                      this.onTap != null
+                          ? Icon(
+                              Icons.chevron_right,
+                              size: 33,
+                            )
+                          : Container(),
+                    ],
+                  ),
                 ],
               ),
               SizedBox(height: 10),
@@ -83,7 +99,8 @@ class SummaryCard extends StatelessWidget {
                       children: <Widget>[
                         Text('Today', style: TextStyles.squareBoxTitleStyle),
                         Center(
-                          child: Text(this.activitiesDuration?.todayOutdoorTime ?? '',
+                          child: Text(
+                              this.activitiesDuration?.todayOutdoorTime ?? '',
                               style: TextStyles.squareBoxValueStyle),
                         ),
                       ],
@@ -98,7 +115,8 @@ class SummaryCard extends StatelessWidget {
                       children: <Widget>[
                         Text('Week', style: TextStyles.squareBoxTitleStyle),
                         Center(
-                          child: Text(this.activitiesDuration?.weekOutdoorTime ?? '',
+                          child: Text(
+                              this.activitiesDuration?.weekOutdoorTime ?? '',
                               style: TextStyles.squareBoxValueStyle),
                         ),
                       ],
@@ -113,7 +131,8 @@ class SummaryCard extends StatelessWidget {
                       children: <Widget>[
                         Text('Month', style: TextStyles.squareBoxTitleStyle),
                         Center(
-                          child: Text(this.activitiesDuration?.monthOutdoorTime ?? '',
+                          child: Text(
+                              this.activitiesDuration?.monthOutdoorTime ?? '',
                               style: TextStyles.squareBoxValueStyle),
                         ),
                       ],
