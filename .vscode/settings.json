@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "Geofence",
         "Scrollable",
         "androidx",
         "bkonyi",
@@ -12,6 +13,7 @@
         "geolocator",
         "precache",
         "rflutter",
+        "rxdart",
         "timeago"
     ]
 }

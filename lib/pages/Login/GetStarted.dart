@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,14 +7,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../Models/User.dart';
 import '../Permission/Permission.dart';
+import '../../constants.dart';
 import '../../components/LargeAvatar.dart';
-import '../../components/SubtitleBar.dart';
-import '../../components/SettingsBlock.dart';
 import '../../components/MapDialog.dart';
 import '../../components/NameTextField.dart';
-import '../../constants.dart';
+import '../../components/SubtitleBar.dart';
+import '../../components/SettingsBlock.dart';
+import '../../Models/Circle.dart';
+import '../../Models/User.dart';
+import '../../providers/CircleProvider.dart';
 
 class GetStarted extends StatelessWidget {
   static const routeName = '/get-started';
@@ -100,18 +103,52 @@ class _GetStartedContentState extends State<GetStartedContent> {
           this.officeLocation.latitude, this.officeLocation.longitude);
     }
 
-    FirebaseAuth.instance.currentUser().then((firebaseUser) {
-      final newUserData = user.data;
+    final firebaseUser = await FirebaseAuth.instance.currentUser();
+    final newUserData = user.data;
+    newUserData.addEntries([
+      MapEntry('id', firebaseUser.uid),
+      MapEntry('phone', firebaseUser.phoneNumber),
+    ]);
+
+    final List<DocumentSnapshot> unAuthUserDocumentSnapshotList =
+        (await Firestore.instance
+                .collection(Constants().firestoreUnAuthenticatedUsersCollection)
+                .where(Constants().firestoreUnAuthenticatedUserPhoneField,
+                    isEqualTo: firebaseUser.phoneNumber)
+                .getDocuments())
+            .documents;
+    if (unAuthUserDocumentSnapshotList.length == 1) {
+      final unAuthUserCirclesList = unAuthUserDocumentSnapshotList.first
+          .data[Constants().firestoreUnAuthenticatedUserCriclesField] as List;
+      final List<String> newUserCirclesList = [];
+
+      unAuthUserCirclesList.forEach(
+        (circleId) {
+          newUserCirclesList.add(circleId);
+
+          final circleProvider = CircleProvider(circleId);
+          Timer.periodic(Duration(milliseconds: 50), (t) async {
+            if (circleProvider.circle != null) {
+              t.cancel();
+              await circleProvider.removeUnAuthUser(firebaseUser.phoneNumber);
+              await circleProvider.addUser(
+                  CircleUser(data: {'id': firebaseUser.uid, 'admin': false}));
+            }
+          });
+        },
+      );
+
       newUserData.addEntries([
-        MapEntry('id', firebaseUser.uid),
-        MapEntry('phone', firebaseUser.phoneNumber),
+        MapEntry('circles', newUserCirclesList),
       ]);
 
-      Firestore.instance
-          .collection(Constants().firestoreUsersCollection)
-          .document(firebaseUser.uid)
-          .setData(newUserData);
-    });
+      await unAuthUserDocumentSnapshotList.first.reference.delete();
+    }
+
+    await Firestore.instance
+        .collection(Constants().firestoreUsersCollection)
+        .document(firebaseUser.uid)
+        .setData(newUserData);
 
     Navigator.of(context).pushNamedAndRemoveUntil(
         Permission.routeName, (Route<dynamic> route) => false);

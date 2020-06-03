@@ -32,9 +32,8 @@ class PhoneNumber extends StatefulWidget {
 
 class _PhoneNumberState extends State<PhoneNumber> {
   @override
-  void initState() async {
-    await removeHomeGeofence();
-    await removeOfficeGeofence();
+  void initState() {
+    removeHomeGeofence().then((_) => removeOfficeGeofence());
     super.initState();
   }
 
