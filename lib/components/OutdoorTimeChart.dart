@@ -17,14 +17,14 @@ class OutdoorTimeChart extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10),
           color: Colors.white24,
-          height: 220,
+          height: 232,
           child: DefaultTabController(
             length: 3,
             child: Column(
               children: <Widget>[
                 TabBar(
                   tabs: [
-                    Tab(text: 'Day'),
+                    Tab(text: 'Today'),
                     Tab(text: 'Week'),
                     Tab(text: 'Month'),
                   ],
@@ -41,12 +41,22 @@ class OutdoorTimeChart extends StatelessWidget {
                     builder: (context, baseActivitiesProvider, _) {
                       return TabBarView(
                         children: [
-                          TodayChart(baseActivitiesProvider
-                              .activitiesDuration?.todayData),
-                          WeekChart(baseActivitiesProvider
-                              .activitiesDuration?.weekData),
-                          MonthChart(baseActivitiesProvider
-                              .activitiesDuration?.monthData),
+                          TodayChart(
+                            baseActivitiesProvider
+                                .activitiesDuration?.todayData,
+                            baseActivitiesProvider
+                                .activitiesDuration?.todayOutdoorTime,
+                          ),
+                          WeekChart(
+                            baseActivitiesProvider.activitiesDuration?.weekData,
+                            baseActivitiesProvider
+                                .activitiesDuration?.weekOutdoorTime,
+                          ),
+                          MonthChart(
+                              baseActivitiesProvider
+                                  .activitiesDuration?.monthData,
+                              baseActivitiesProvider
+                                  .activitiesDuration?.monthOutdoorTime),
                         ],
                       );
                     },

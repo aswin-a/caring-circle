@@ -1,3 +1,5 @@
+import '../utils/FormattingUtils.dart';
+
 class ActivitiesDuration {
   List<double> _todayData;
   List<double> _weekData;
@@ -9,30 +11,18 @@ class ActivitiesDuration {
   List<double> get weekData => this._weekData;
   List<double> get monthData => this._monthData;
 
-  String get todayOutdoorTime =>
-      (this._todayData == null
-          ? ''
-          : (this._todayData.fold(
-                      0, (previousValue, element) => previousValue + element)
-                  as double)
-              .toStringAsFixed(0)) +
-      ' mins';
+  String get todayOutdoorTime => this._todayData == null
+      ? ''
+      : formatOutdoorTime(this._todayData.fold<double>(
+          0, (previousValue, element) => previousValue + element));
 
-  String get weekOutdoorTime =>
-      (this._weekData == null
-          ? ''
-          : (this._weekData.fold(
-                      0, (previousValue, element) => previousValue + element)
-                  as double)
-              .toStringAsFixed(0)) +
-      ' mins';
+  String get weekOutdoorTime => this._todayData == null
+      ? ''
+      : formatOutdoorTime(this._todayData.fold<double>(
+          0, (previousValue, element) => previousValue + element));
 
-  String get monthOutdoorTime =>
-      (this._monthData == null
-          ? ''
-          : (this._monthData.fold(
-                      0, (previousValue, element) => previousValue + element)
-                  as double)
-              .toStringAsFixed(0)) +
-      ' mins';
+  String get monthOutdoorTime => this._todayData == null
+      ? ''
+      : formatOutdoorTime(this._todayData.fold<double>(
+          0, (previousValue, element) => previousValue + element));
 }

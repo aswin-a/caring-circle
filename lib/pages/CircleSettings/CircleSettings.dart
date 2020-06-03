@@ -10,6 +10,7 @@ import 'package:international_phone_input/international_phone_input.dart';
 import './CircleSettingsEdit.dart';
 import './CircleSettingsUsersList.dart';
 import '../../constants.dart';
+import '../../components/Alert.dart';
 import '../../components/SubtitleBar.dart';
 import '../../components/TitleBar.dart';
 import '../../components/LargeAvatar.dart';
@@ -166,26 +167,60 @@ class _CircleSettingsContent extends StatelessWidget {
                             content: CircleSettingsUsersList(),
                           )
                         : Container(),
-                    // TODO: Push to bottom of screen
-                    Container(
-                      alignment: Alignment.bottomCenter,
-                      padding: EdgeInsets.only(bottom: 20),
-                      child: FlatButton(
-                        onPressed: isAdmin
-                            ? () => deleteCircle(context, circleProvider)
-                            : () => leaveCircle(context, circleProvider),
-                        child: Text(
-                          isAdmin ? 'Delete Circle' : 'Leave Circle',
-                          style: Theme.of(context).textTheme.button,
-                        ),
-                      ),
-                    ),
+                    SizedBox(height: 20),
+                    isAdmin
+                        ? CircleSettingBottomAction(
+                            title: 'Delete Circle',
+                            onPressed: () =>
+                                deleteCircle(context, circleProvider),
+                            danger: true,
+                          )
+                        : Container(),
                   ],
                 ),
               ),
+              isAdmin
+                  ? Container()
+                  : CircleSettingBottomAction(
+                      title: 'Leave Circle',
+                      onPressed: () => leaveCircle(context, circleProvider),
+                    )
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class CircleSettingBottomAction extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String title;
+  final bool danger;
+  const CircleSettingBottomAction(
+      {this.title, this.onPressed, this.danger = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.bottomCenter,
+      padding: EdgeInsets.only(bottom: 20),
+      child: FlatButton(
+        onPressed: () {
+          showAlert(
+            context,
+            'Are you sure?',
+            'Confirm',
+            onPressedButton: onPressed,
+            showCloseButton: true,
+          );
+        },
+        child: Text(
+          title,
+          style: this.danger
+              ? Theme.of(context).textTheme.button.copyWith(color: Colors.red)
+              : Theme.of(context).textTheme.button,
+        ),
       ),
     );
   }

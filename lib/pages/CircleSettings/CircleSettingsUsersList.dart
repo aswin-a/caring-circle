@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../constants.dart';
+import '../../components/Alert.dart';
 import '../../Models/Circle.dart';
 import '../../providers/UserProvider.dart';
 import '../../providers/CircleProvider.dart';
@@ -177,14 +178,20 @@ class UserListBlock extends StatelessWidget {
               userId != adminId
                   ? IconButton(
                       icon: Icon(Icons.delete),
-                      onPressed: () {
-                        if (isUnAuthUser) {
-                          removeUnAuthUser(circleId);
-                        } else {
-                          UserProvider(userId).removeCircle(circleId);
-                          CircleProvider(circleId).removeUser(userId);
-                        }
-                      },
+                      onPressed: () => showAlert(
+                        context,
+                        'Are you sure?',
+                        'Confirm',
+                        showCloseButton: true,
+                        onPressedButton: () {
+                          if (isUnAuthUser) {
+                            removeUnAuthUser(circleId);
+                          } else {
+                            UserProvider(userId).removeCircle(circleId);
+                            CircleProvider(circleId).removeUser(userId);
+                          }
+                        },
+                      ),
                       color: Colors.red,
                     )
                   : Padding(

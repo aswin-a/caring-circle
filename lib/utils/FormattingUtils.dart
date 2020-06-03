@@ -24,3 +24,18 @@ String getCurrentStatus(
   }
   return result;
 }
+
+String formatOutdoorTime(double minutes) {
+  String result = '';
+  Duration duration = Duration(minutes: minutes.toInt());
+  if (duration.inDays != 0) {
+    result += '${duration.inDays} days ';
+    result += '${duration.inHours.remainder(Duration.hoursPerDay)} hrs';
+  } else if (duration.inHours != 0) {
+    result += '${duration.inHours.remainder(Duration.hoursPerDay)} hrs ';
+    result += '${duration.inMinutes.remainder(Duration.minutesPerHour)} mins';
+  } else {
+    result += '${duration.inMinutes.remainder(Duration.minutesPerHour)} mins';
+  }
+  return result;
+}

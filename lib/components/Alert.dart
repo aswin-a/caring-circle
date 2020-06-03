@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-void showAlert(BuildContext context, String title, String buttonText,
-    {String description = '', Function onPressedButton}) {
+void showAlert(
+  BuildContext context,
+  String title,
+  String buttonText, {
+  String description = '',
+  Function onPressedButton,
+  bool showCloseButton = false,
+}) {
   Alert(
     context: context,
     title: title,
     desc: description,
+    closeFunction: () {},
     buttons: [
       DialogButton(
         height: 50,
@@ -15,12 +22,13 @@ void showAlert(BuildContext context, String title, String buttonText,
           buttonText,
           style: Theme.of(context).textTheme.display3,
         ),
-        onPressed: () => onPressedButton != null
-            ? onPressedButton()
-            : Navigator.pop(context),
+        onPressed: () {
+          if (onPressedButton != null) onPressedButton();
+          Navigator.pop(context);
+        },
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
     ],
-    style: AlertStyle(isCloseButton: false),
+    style: AlertStyle(isCloseButton: showCloseButton),
   ).show();
 }

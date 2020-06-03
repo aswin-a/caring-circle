@@ -73,6 +73,11 @@ class CircleActivitiesProvider extends ChangeNotifier implements BaseActivitiesP
       }
     }
 
+    final nUser = _userActivitiesProviderMap.length;
+    todayData = todayData.map((e) => e/nUser).toList();
+    weekData = weekData.map((e) => e/nUser).toList();
+    monthData = monthData.map((e) => e/nUser).toList();
+
     this._activitiesDuration =
         ActivitiesDuration(todayData, weekData, monthData);
     notifyListeners();

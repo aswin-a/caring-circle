@@ -27,6 +27,7 @@ class NameTextField extends StatelessWidget {
             showCursor: true,
             style: Theme.of(context).textTheme.display3,
             textAlign: TextAlign.center,
+            textCapitalization: TextCapitalization.words,
           ),
         ),
       ),
