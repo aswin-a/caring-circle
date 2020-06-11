@@ -23,8 +23,8 @@ void showAlert(
           style: Theme.of(context).textTheme.display3,
         ),
         onPressed: () {
-          if (onPressedButton != null) onPressedButton();
           Navigator.pop(context);
+          if (onPressedButton != null) onPressedButton();
         },
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
