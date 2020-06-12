@@ -65,14 +65,17 @@ class _CircleSettingsContent extends StatelessWidget {
 
     if (userDocumentSnapshotList.length == 1) {
       final userId = userDocumentSnapshotList.first.data['id'];
-      final userProvider = UserProvider(userId);
-      Timer.periodic(Duration(milliseconds: 50), (t) {
-        if (userProvider.user != null) {
-          t.cancel();
-          userProvider.addCircle(circleProvider.circle.id);
-        }
-      });
-      circleProvider.addUser(CircleUser(data: {'id': userId, 'admin': false}));
+      if (!circleProvider.circle.users.any((element) => element.id == userId)) {
+        final userProvider = UserProvider(userId);
+        Timer.periodic(Duration(milliseconds: 50), (t) {
+          if (userProvider.user != null) {
+            t.cancel();
+            userProvider.addCircle(circleProvider.circle.id);
+          }
+        });
+        circleProvider
+            .addUser(CircleUser(data: {'id': userId, 'admin': false}));
+      }
     } else {
       final List<DocumentSnapshot> unAuthUserDocumentSnapshotList =
           (await Firestore.instance
@@ -86,14 +89,17 @@ class _CircleSettingsContent extends StatelessWidget {
       if (unAuthUserDocumentSnapshotList.length == 1) {
         final unAuthUserCirclesList = unAuthUserDocumentSnapshotList.first
             .data[Constants().firestoreUnAuthenticatedUserCriclesField] as List;
-        final List<String> unAuthUserUpdatedCirclesList = [];
-        unAuthUserCirclesList
-            .forEach((circleId) => unAuthUserUpdatedCirclesList.add(circleId));
-        unAuthUserUpdatedCirclesList.add(circleProvider.circle.id);
-        unAuthUserDocumentSnapshotList.first.reference.updateData({
-          Constants().firestoreUnAuthenticatedUserCriclesField:
-              unAuthUserUpdatedCirclesList
-        });
+        if (!unAuthUserCirclesList
+            .any((element) => element == circleProvider.circle.id)) {
+          final List<String> unAuthUserUpdatedCirclesList = [];
+          unAuthUserCirclesList.forEach(
+              (circleId) => unAuthUserUpdatedCirclesList.add(circleId));
+          unAuthUserUpdatedCirclesList.add(circleProvider.circle.id);
+          unAuthUserDocumentSnapshotList.first.reference.updateData({
+            Constants().firestoreUnAuthenticatedUserCriclesField:
+                unAuthUserUpdatedCirclesList
+          });
+        }
       } else {
         await Firestore.instance
             .collection(Constants().firestoreUnAuthenticatedUsersCollection)
@@ -104,8 +110,12 @@ class _CircleSettingsContent extends StatelessWidget {
           ],
         });
       }
-      circleProvider.addUnAuthUser(CircleUnAuthUser(
-          data: {'phone': phoneNumber, 'name': contact.fullName}));
+
+      if (!circleProvider.circle.unAuthUsers
+          .any((element) => element.phone == phoneNumber)) {
+        circleProvider.addUnAuthUser(CircleUnAuthUser(
+            data: {'phone': phoneNumber, 'name': contact.fullName}));
+      }
     }
   }
 

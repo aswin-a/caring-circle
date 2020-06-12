@@ -139,32 +139,39 @@ class UserListBlock extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                child: CircleAvatar(
-                  radius: 18,
+          Expanded(
+            child: Row(
+              children: <Widget>[
+                CircleAvatar(
+                  radius: 20,
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  backgroundImage: this.imageURL == null
-                      ? AssetImage(Constants().defaultUserAvatarWhiteAssetPath)
-                      : CachedNetworkImageProvider(this.imageURL),
+                  child: CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    backgroundImage: this.imageURL == null
+                        ? AssetImage(
+                            Constants().defaultUserAvatarWhiteAssetPath)
+                        : CachedNetworkImageProvider(this.imageURL),
+                  ),
                 ),
-              ),
-              SizedBox(width: 10),
-              Text(
-                this.name,
-                style: TextStyles.squareBoxValueStyle,
-              ),
-              Text(
-                ' (${this.phoneNumber})',
-                style: Theme.of(context)
-                    .textTheme
-                    .caption
-                    .copyWith(color: Colors.black54),
-              ),
-            ],
+                SizedBox(width: 10),
+                Text(
+                  this.name,
+                  style: TextStyles.squareBoxValueStyle,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Flexible(
+                  child: Text(
+                    ' (${this.phoneNumber})',
+                    style: Theme.of(context)
+                        .textTheme
+                        .caption
+                        .copyWith(color: Colors.black54),
+                    softWrap: false,
+                  ),
+                ),
+              ],
+            ),
           ),
           Row(
             children: <Widget>[

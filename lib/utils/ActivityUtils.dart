@@ -125,7 +125,7 @@ List<List<double>> getDurationDataFromOrderedActivities(
           dataIndex += 1;
         } else if (!entryTime.isBefore(durationEnd) &&
             !exitTime.isAfter(durationStart)) {
-          result[durationIndex] += 60;
+          result[durationIndex] += durationEnd.difference(durationStart).inMinutes;
           durationIndex -= 1;
         } else if (!entryTime.isBefore(durationEnd) &&
             !exitTime.isBefore(durationStart) &&

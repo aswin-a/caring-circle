@@ -16,13 +16,13 @@ class ActivitiesDuration {
       : formatOutdoorTime(this._todayData.fold<double>(
           0, (previousValue, element) => previousValue + element));
 
-  String get weekOutdoorTime => this._todayData == null
+  String get weekOutdoorTime => this._weekData == null
       ? ''
-      : formatOutdoorTime(this._todayData.fold<double>(
+      : formatOutdoorTime(this._weekData.fold<double>(
           0, (previousValue, element) => previousValue + element));
 
-  String get monthOutdoorTime => this._todayData == null
+  String get monthOutdoorTime => this._monthData == null
       ? ''
-      : formatOutdoorTime(this._todayData.fold<double>(
+      : formatOutdoorTime(this._monthData.fold<double>(
           0, (previousValue, element) => previousValue + element));
 }
