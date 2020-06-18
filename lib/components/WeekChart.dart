@@ -2,8 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-import '../styles/textStyles.dart' as TextStyles;
-
 class WeekChart extends StatelessWidget {
   final List<double> data;
   final String duration;
@@ -30,11 +28,14 @@ class WeekChart extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text('Outdoor Time: $duration',
-            textAlign: TextAlign.center,
-            style: TextStyles.squareBoxValueStyle.copyWith(
-              color: Colors.white70,
-            )),
+        Text(
+          'Outdoor Time: $duration',
+          textAlign: TextAlign.center,
+          style: Theme.of(context)
+              .textTheme
+              .bodyText2
+              .copyWith(color: Colors.white70),
+        ),
         Container(
           height: 154,
           child: BarChart(

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-import '../styles/textStyles.dart' as TextStyles;
-
 class TodayChart extends StatelessWidget {
   final List<double> data;
   final String duration;
@@ -20,7 +18,10 @@ class TodayChart extends StatelessWidget {
         Text(
           'Outdoor Time: $duration',
           textAlign: TextAlign.center,
-          style: TextStyles.squareBoxValueStyle.copyWith(color: Colors.white70),
+          style: Theme.of(context)
+              .textTheme
+              .bodyText2
+              .copyWith(color: Colors.white70),
         ),
         Container(
           height: 154,

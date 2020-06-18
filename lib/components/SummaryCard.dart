@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../styles/textStyles.dart' as TextStyles;
 import '../Models/Activities.dart';
 
 class SummaryCard extends StatelessWidget {
@@ -61,7 +60,11 @@ class SummaryCard extends StatelessWidget {
                       SizedBox(width: 10),
                       Text(
                         this.title,
-                        style: TextStyles.circleCardTitleStyle,
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
                       ),
                     ],
                   ),
@@ -97,11 +100,15 @@ class SummaryCard extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        Text('Today', style: TextStyles.squareBoxTitleStyle),
+                        Text('Today',
+                            style: Theme.of(context).textTheme.caption),
                         Center(
                           child: Text(
                               this.activitiesDuration?.todayOutdoorTime ?? '',
-                              style: TextStyles.squareBoxValueStyle),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2
+                                  .copyWith(color: Colors.black)),
                         ),
                       ],
                     ),
@@ -113,11 +120,15 @@ class SummaryCard extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        Text('Week', style: TextStyles.squareBoxTitleStyle),
+                        Text('Week',
+                            style: Theme.of(context).textTheme.caption),
                         Center(
                           child: Text(
                               this.activitiesDuration?.weekOutdoorTime ?? '',
-                              style: TextStyles.squareBoxValueStyle),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2
+                                  .copyWith(color: Colors.black)),
                         ),
                       ],
                     ),
@@ -129,11 +140,15 @@ class SummaryCard extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        Text('Month', style: TextStyles.squareBoxTitleStyle),
+                        Text('Month',
+                            style: Theme.of(context).textTheme.caption),
                         Center(
                           child: Text(
                               this.activitiesDuration?.monthOutdoorTime ?? '',
-                              style: TextStyles.squareBoxValueStyle),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2
+                                  .copyWith(color: Colors.black)),
                         ),
                       ],
                     ),

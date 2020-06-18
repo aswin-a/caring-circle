@@ -79,7 +79,7 @@ class Permission extends StatelessWidget {
                           children: <Widget>[
                             SizedBox(height: 44),
                             Text('Before we proceed...',
-                                style: Theme.of(context).textTheme.display4),
+                                style: Theme.of(context).textTheme.headline4),
                           ],
                         ),
                         Column(
@@ -96,7 +96,7 @@ class Permission extends StatelessWidget {
                               child: Text(
                                 'We need your permission to keep track of your time outside.' +
                                     ' Please allow us to access your location when not using the app.',
-                                style: Theme.of(context).textTheme.display2,
+                                style: Theme.of(context).textTheme.bodyText1,
                                 textAlign: TextAlign.center,
                               ),
                             ),

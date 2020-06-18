@@ -222,7 +222,7 @@ class _GetStartedContentState extends State<GetStartedContent> {
                       children: <Widget>[
                         SizedBox(height: 44),
                         Text('Let\'s get started.',
-                            style: Theme.of(context).textTheme.display4),
+                            style: Theme.of(context).textTheme.headline4),
                         SizedBox(height: 10),
                         Center(
                           child: LargeAvatarEdit(

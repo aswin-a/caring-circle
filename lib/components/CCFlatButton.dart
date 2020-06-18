@@ -35,13 +35,13 @@ class CCFlatButton extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.only(left: this.showBackIcon ? 20 : 0),
-              child: Text(
-                this.text,
-                style: this.darkTextColor
-                    ? Theme.of(context).textTheme.display1.copyWith(
-                        color: Colors.black54, fontWeight: FontWeight.w500)
-                    : Theme.of(context).textTheme.display1,
-              ),
+              child: Text(this.text,
+                  style: this.darkTextColor
+                      ? Theme.of(context)
+                          .textTheme
+                          .bodyText2
+                          .copyWith(color: Colors.black54)
+                      : Theme.of(context).textTheme.bodyText2),
             ),
           ],
         ),

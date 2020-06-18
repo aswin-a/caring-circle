@@ -9,7 +9,6 @@ import '../../components/Alert.dart';
 import '../../Models/Circle.dart';
 import '../../providers/UserProvider.dart';
 import '../../providers/CircleProvider.dart';
-import '../../styles/textStyles.dart' as TextStyles;
 
 class CircleSettingsUsersList extends StatelessWidget {
   @override
@@ -157,7 +156,10 @@ class UserListBlock extends StatelessWidget {
                 SizedBox(width: 10),
                 Text(
                   this.name,
-                  style: TextStyles.squareBoxValueStyle,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText2
+                      .copyWith(color: Colors.black),
                   overflow: TextOverflow.ellipsis,
                 ),
                 Flexible(

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:background_fetch/background_fetch.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,7 +9,7 @@ import './ActivityUtils.dart';
 import '../constants.dart';
 import '../Models/User.dart';
 
-const double GEOFENCE_RADIUS = 100;
+const double GEOFENCE_BUFFER = 50;
 
 final BackgroundFetchConfig backgroundFetchConfig = BackgroundFetchConfig(
   minimumFetchInterval: 10,
@@ -34,21 +36,15 @@ Future<void> callback(String taskId) async {
 
   print('CaCi: FirebaseAuth accessible');
 
-  // TODO: Remove this
-  Firestore.instance.collection('temp').add({
-    'time': Timestamp.fromDate(DateTime.now().toUtc()),
-    'phone': firebaseUser.phoneNumber
-  });
-
-  print('CaCi: FireStore accessible');
-
   final userDocumentReference = Firestore.instance
       .collection(Constants().firestoreUsersCollection)
       .document(firebaseUser.uid);
   final user = User.fromData((await userDocumentReference.get()).data);
 
+  print('CaCi: FireStore accessible');
+
   final Position currentLocation = await Geolocator()
-      .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
 
   print('CaCi: Geolocator accessible');
 
@@ -67,23 +63,32 @@ Future<void> callback(String taskId) async {
           currentLocation.longitude,
         );
 
+  // TODO: Remove this
+  Firestore.instance.collection('temp').add({
+    'time': Timestamp.fromDate(DateTime.now().toUtc()),
+    'phone': firebaseUser.phoneNumber,
+    'locationAccuracy': currentLocation.accuracy,
+    'homeDistance': distanceFromHome,
+    'officeDistance': distanceFromOffice,
+  });
+
+  final geofenceRadius = max(GEOFENCE_BUFFER, currentLocation.accuracy);
   LocationStatus currentLocationStatus;
-  if (distanceFromHome > GEOFENCE_RADIUS &&
-      distanceFromOffice > GEOFENCE_RADIUS) {
+  if (distanceFromHome > geofenceRadius &&
+      distanceFromOffice > geofenceRadius) {
     currentLocationStatus = LocationStatus.outside;
-  } else if (distanceFromHome < GEOFENCE_RADIUS) {
+  } else if (distanceFromHome < geofenceRadius) {
     currentLocationStatus = LocationStatus.home;
-  } else if (distanceFromOffice < GEOFENCE_RADIUS) {
+  } else if (distanceFromOffice < geofenceRadius) {
     currentLocationStatus = LocationStatus.office;
   }
 
   print('CaCi: Location Status: $currentLocationStatus');
   print('CaCi: Past Location Status: ${user.locationStatus}');
 
-  await userDocumentReference
-      .updateData({'locationStatus': currentLocationStatus.toString()});
-
   if (currentLocationStatus != user.locationStatus) {
+    await userDocumentReference
+        .updateData({'locationStatus': currentLocationStatus.toString()});
     final currentActivityQuerySnapshot =
         await getCurrentActivityFuture(firebaseUser.uid);
 

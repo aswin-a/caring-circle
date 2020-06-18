@@ -162,7 +162,7 @@ class _CircleSettingsContent extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Text(
                         circleProvider.circle.name,
-                        style: Theme.of(context).textTheme.display3,
+                        style: Theme.of(context).textTheme.headline6,
                         textAlign: TextAlign.center,
                       ),
                     ),

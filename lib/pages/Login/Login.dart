@@ -115,12 +115,12 @@ class _PhoneNumberState extends State<PhoneNumber> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           SizedBox(height: 88),
-          Text('Join the', style: Theme.of(context).textTheme.display4),
-          Text('Caring Circle.', style: Theme.of(context).textTheme.display4),
+          Text('Join the', style: Theme.of(context).textTheme.headline4),
+          Text('Caring Circle.', style: Theme.of(context).textTheme.headline4),
           SizedBox(height: 10),
           Text(
             'Enter your phone number to continue.',
-            style: Theme.of(context).textTheme.display2,
+            style: Theme.of(context).textTheme.bodyText1,
           ),
           SizedBox(height: 40),
           Center(
@@ -152,7 +152,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.3),
                     hintText: 'Phone Number',
-                    hintStyle: Theme.of(context).textTheme.display1,
+                    hintStyle: Theme.of(context).textTheme.bodyText2,
                     prefixIcon: Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Center(
@@ -160,7 +160,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
                         child: Text(
                           '+91',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.display3,
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
                     ),
@@ -168,7 +168,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
                   showCursor: true,
                   style: Theme.of(context)
                       .textTheme
-                      .display3
+                      .headline6
                       .copyWith(letterSpacing: 3),
                   keyboardType: TextInputType.phone,
                   inputFormatters: [LengthLimitingTextInputFormatter(10)],

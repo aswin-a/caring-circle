@@ -20,7 +20,7 @@ void showAlert(
         radius: BorderRadius.circular(10),
         child: Text(
           buttonText,
-          style: Theme.of(context).textTheme.display3,
+          style: Theme.of(context).textTheme.headline6,
         ),
         onPressed: () {
           Navigator.pop(context);

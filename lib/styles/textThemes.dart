@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
 
-const textTheme = TextTheme(
-  display4: TextStyle(
+final textTheme = TextTheme(
+  headline4: TextStyle(
     fontSize: 34,
     fontWeight: FontWeight.bold,
     color: Colors.white,
   ),
-  display3: TextStyle(
+  headline5: TextStyle(
+    color: Colors.white,
+    fontSize: 28,
+    fontWeight: FontWeight.bold,
+  ),
+  headline6: TextStyle(
     color: Colors.white,
     fontSize: 22,
     fontWeight: FontWeight.bold,
   ),
-  display2: TextStyle(
+  bodyText1: TextStyle(
     fontSize: 20,
     color: Colors.white,
   ),
-  display1: TextStyle(
+  bodyText2: TextStyle(
     color: Colors.white,
-    fontSize: 15,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
   ),
   button: TextStyle(
     color: Colors.white,
     fontSize: 22,
   ),
-  title: TextStyle(
-    color: Colors.white,
-    fontSize: 28,
-    fontWeight: FontWeight.bold,
-  ),
-  caption: TextStyle(color: Colors.white70),
 );

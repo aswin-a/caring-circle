@@ -83,17 +83,17 @@ class _OTPContentState extends State<OTPContent> {
               showBackIcon: true,
             ),
           ),
-          Text('Security Check.', style: Theme.of(context).textTheme.display4),
+          Text('Security Check.', style: Theme.of(context).textTheme.headline4),
           SizedBox(height: 10),
           Wrap(
             children: <Widget>[
               Text(
                 'Enter the OTP sent to ',
-                style: Theme.of(context).textTheme.display2,
+                style: Theme.of(context).textTheme.bodyText1,
               ),
               Text(
                 '${routeArguments['phoneNumber']}.',
-                style: Theme.of(context).textTheme.display2,
+                style: Theme.of(context).textTheme.bodyText1,
               ),
             ],
           ),
@@ -117,10 +117,10 @@ class _OTPContentState extends State<OTPContent> {
             selectedFillColor: Colors.white.withOpacity(0.3),
             activeFillColor: Colors.white.withOpacity(0.3),
             inactiveFillColor: Colors.white.withOpacity(0.3),
-            textStyle: Theme.of(context).textTheme.display3,
+            textStyle: Theme.of(context).textTheme.headline6,
             textInputType: TextInputType.number,
             dialogTitle: 'Paste OTP?',
-            dialogContent: ' ',
+            dialogContent: '                          ',
             onCompleted: (otp) =>
                 this.onCompleted(routeArguments['verificationId'], otp),
           ),

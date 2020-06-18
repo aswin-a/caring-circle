@@ -68,7 +68,7 @@ class _UserSettingsContent extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   userProvider.user.name,
-                  style: Theme.of(context).textTheme.display3,
+                  style: Theme.of(context).textTheme.headline6,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -79,7 +79,10 @@ class _UserSettingsContent extends StatelessWidget {
                       userProvider.user.locationStatus,
                       userActivitiesProvider.currentActivityExitTime,
                     ),
-                    style: Theme.of(context).textTheme.caption,
+                    style: Theme.of(context)
+                        .textTheme
+                        .caption
+                        .copyWith(color: Colors.white70),
                   );
                 },
               ),

@@ -14,6 +14,7 @@
         "geofencing",
         "geolocator",
         "initialise",
+        "obsecure",
         "precache",
         "rflutter",
         "rxdart",
