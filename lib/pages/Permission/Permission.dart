@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../constants.dart';
 import '../../utils/GeofencingUtils.dart';
+import '../../utils/BackgroundUtils.dart';
 import '../Dashboard/Dashboard.dart';
 import '../../Models/User.dart';
 import '../../providers/UserProvider.dart';
@@ -20,21 +21,8 @@ class Permission extends StatelessWidget {
     this.locationPermission = checkLocationPermission();
   }
 
-  void initialiseGeofences(User user) async {
-    await initialiseGeofenceManager();
-    if (user.location.home != null) {
-      final homeLocation = user.location.home;
-      initialiseHomeGeofence(homeLocation.latitude, homeLocation.longitude);
-    }
-    if (user.location.office != null) {
-      final officeLocation = user.location.office;
-      initialiseOfficeGeofence(
-          officeLocation.latitude, officeLocation.longitude);
-    }
-  }
-
   void onPermissionGranted(BuildContext context, User user) {
-    this.initialiseGeofences(user);
+    initializeBackgroundTask();
     Navigator.of(context).pushNamedAndRemoveUntil(
         Dashboard.routeName, (Route<dynamic> route) => false);
   }

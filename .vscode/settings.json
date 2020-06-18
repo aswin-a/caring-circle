@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "Geofence",
+        "Geofences",
         "Scrollable",
         "androidx",
         "bkonyi",
@@ -8,9 +9,11 @@
         "crashlytics",
         "cupertino",
         "firestore",
+        "fluttercontactpicker",
         "fullscreen",
         "geofencing",
         "geolocator",
+        "initialise",
         "precache",
         "rflutter",
         "rxdart",

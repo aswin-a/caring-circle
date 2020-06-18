@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:background_fetch/background_fetch.dart';
 
 import './pages/Splash/Splash.dart';
 import './pages/Login/Login.dart';
@@ -18,6 +19,7 @@ import './pages/Circle/Circle.dart';
 import './pages/CircleSettings/CircleSettings.dart';
 import './pages/CircleSettings/CircleSettingsEdit.dart';
 import './pages/CreateCircle/CreateCircle.dart';
+import './utils/BackgroundUtils.dart' as BackgroundUtils;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +32,8 @@ void main() async {
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
 
   runApp(CaringCircle());
+
+  BackgroundFetch.registerHeadlessTask(BackgroundUtils.callback);
 }
 
 class CaringCircle extends StatelessWidget {

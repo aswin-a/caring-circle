@@ -8,7 +8,7 @@ import '../../constants.dart';
 import '../../components/TitleBar.dart';
 import '../../components/LargeAvatar.dart';
 import '../Login/Login.dart';
-import '../../utils/GeofencingUtils.dart';
+import '../../utils/BackgroundUtils.dart';
 import './UserSettingsEdit.dart';
 import './UserSettingsLocation.dart';
 import '../../utils/FormattingUtils.dart' as FormattingUtils;
@@ -91,8 +91,7 @@ class _UserSettingsContent extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: 20),
                   child: FlatButton(
                     onPressed: () async {
-                      await removeHomeGeofence();
-                      await removeOfficeGeofence();
+                      stopBackgroundTask();
                       await FirebaseAuth.instance.signOut();
                       Navigator.of(context).pushNamedAndRemoveUntil(
                           Login.routeName, (_) => false);

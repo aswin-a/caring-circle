@@ -6,7 +6,7 @@ import '../../components/SubtitleBar.dart';
 import '../../components/SettingsBlock.dart';
 import '../../components/MapDialog.dart';
 import '../../providers/UserProvider.dart';
-import '../../utils/GeofencingUtils.dart';
+import '../../utils/BackgroundUtils.dart';
 
 class UserSettingsLocation extends StatelessWidget {
   LatLng locationOnMap;
@@ -17,11 +17,7 @@ class UserSettingsLocation extends StatelessWidget {
           this.locationOnMap.latitude, this.locationOnMap.longitude);
       await userProvider.uploadData(onlyLocationData: true);
 
-      await removeHomeGeofence();
-      initialiseHomeGeofence(
-        userProvider.user.location.home.latitude,
-        userProvider.user.location.home.longitude,
-      );
+      initializeBackgroundTask();
     }
 
     void updateLocationOnMap(LatLng location) {
@@ -51,11 +47,7 @@ class UserSettingsLocation extends StatelessWidget {
           this.locationOnMap.latitude, this.locationOnMap.longitude);
       await userProvider.uploadData(onlyLocationData: true);
 
-      await removeOfficeGeofence();
-      initialiseOfficeGeofence(
-        userProvider.user.location.office.latitude,
-        userProvider.user.location.office.longitude,
-      );
+      initializeBackgroundTask();
     }
 
     void updateLocationOnMap(LatLng location) {

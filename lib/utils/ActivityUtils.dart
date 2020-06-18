@@ -13,10 +13,10 @@ Stream<QuerySnapshot> getCurrentActivityStream([userId]) {
       .snapshots();
 }
 
-Future<QuerySnapshot> get currentActivityFuture {
+Future<QuerySnapshot> getCurrentActivityFuture([String userId]) {
   return Firestore.instance
       .collection(Constants().firestoreUsersCollection)
-      .document(Constants().currentUserId)
+      .document(userId != null ? userId : Constants().currentUserId)
       .collection(Constants().firestoreUserActivitiesCollection)
       .where(Constants().firestoreUserActivitiesEntryField, isNull: true)
       .getDocuments();

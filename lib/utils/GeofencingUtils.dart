@@ -132,18 +132,18 @@ void _initialiseGeofence(
 }
 
 Future<bool> removeHomeGeofence() async {
-  await _reomoveGeofence(HOME_GEOFENCE_ID);
+  await _removeGeofence(HOME_GEOFENCE_ID);
   final geofenceIds = await GeofencingManager.getRegisteredGeofenceIds();
   return geofenceIds.indexOf(HOME_GEOFENCE_ID) == -1;
 }
 
 Future<bool> removeOfficeGeofence() async {
-  await _reomoveGeofence(OFFICE_GEOFENCE_ID);
+  await _removeGeofence(OFFICE_GEOFENCE_ID);
   final geofenceIds = await GeofencingManager.getRegisteredGeofenceIds();
   return geofenceIds.indexOf(OFFICE_GEOFENCE_ID) == -1;
 }
 
-Future<void> _reomoveGeofence([String geofenceId = HOME_GEOFENCE_ID]) async {
+Future<void> _removeGeofence([String geofenceId = HOME_GEOFENCE_ID]) async {
   await GeofencingManager.removeGeofenceById(geofenceId);
 }
 
